@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding='utf-8'?>
+<module name="so" framework="true">
+    <public>
+        <component priority="0" singleton="true" supportAlias="true"  remote="true" tx="CMT">
+            <interface>nc.pubitf.so.restapi.jsonservice.IJsonServiceForRestful</interface>
+            <implementation>nc.impl.so.restapi.jsonservice.JsonServiceForRestfulServiceImpl</implementation>
+        </component>
+        <component priority="0" singleton="true" supportAlias="true"  remote="true" tx="CMT">
+            <interface>nc.pub.so.apiservice.ILazadaService</interface>
+            <implementation>nc.impl.so.apiservice.LazadaServiceImpl</implementation>
+        </component>
+    </public>    
+</module>
+
