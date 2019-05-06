@@ -139,7 +139,7 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 		
 	}
 
-    private void setDef(SaleOrderVO[] vos) {
+    private void setDef(SaleOrderVO[] vos) { 
     	StringBuffer err = new StringBuffer();
     	Map<String, String> idCOdeMap = new HashMap<String, String>();
     	Set<String> defcodes = new HashSet<String>();
