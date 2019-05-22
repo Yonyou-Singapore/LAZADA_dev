@@ -176,9 +176,13 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 					
 				}
 				hvo.setVbillcode(null);
-				//国家 vdef1
-				hvo.setVdef1("LA-" + viewvo.getCountry());
-				//平台订单号
+				//国家(交易平台) vdef1 如果是SG 设置为004 
+				if("SG".equals(viewvo.getPk_org())) {
+					hvo.setVdef1("004");//LAZADA SG
+				} else {
+					hvo.setVdef1("LA-" + viewvo.getCountry());
+				}
+				//平台订单号 
 				hvo.setVdef2(viewvo.getOrderid());
 				//联系人
 				hvo.setVdef3(viewvo.getFullname());

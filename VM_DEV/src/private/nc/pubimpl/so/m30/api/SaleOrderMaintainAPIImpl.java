@@ -112,9 +112,10 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 	}
 	
     private void setDefaultForLazada(SaleOrderVO[] vos) {
-    	Map<String, String> querySkuPK = this.querySkuPK(vos);
+    	Map<String, String> queryHelpSkuPK = this.queryHelpSkuPK(vos);
+    	Map<String, String> queryCodeSkuPK = this.querySkuCodePK(vos);
     	//sku 匹配
-    	this.setSkuPk(vos, querySkuPK);
+    	this.setSkuPk(vos, queryHelpSkuPK, queryCodeSkuPK);
     	//组织匹配
     	this.setPk_org(vos);
     	//自定义项
@@ -202,7 +203,7 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
     	}
 	}
 
-	private void setSkuPk(SaleOrderVO[] vos, Map<String, String> querySkuPK) {
+	private void setSkuPk(SaleOrderVO[] vos, Map<String, String> queryhelpSkuPK, Map<String, String> queryCodeSkuPK) {
 		StringBuffer error = new StringBuffer();
 		for(SaleOrderVO vo : vos) { 
 	//		//单据号默认
@@ -214,11 +215,12 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 			
 			SaleOrderBVO[] childrenVO = vo.getChildrenVO();
 			for(SaleOrderBVO child : childrenVO) {
-				if(querySkuPK.get(child.getCmaterialvid()) == null) {
+				String skuPK = queryhelpSkuPK.get(child.getCmaterialvid()) == null ? queryCodeSkuPK.get(child.getCmaterialvid()) : queryhelpSkuPK.get(child.getCmaterialvid());
+				if(StringUtils.isBlank(skuPK)) {
 					error.append("order:" + vo.getParentVO().getVdef2() +" ,sku [" + child.getCmaterialvid() + "], Country:[" + vo.getParentVO().getVdef1() + "]");
 				}
-				child.setCmaterialvid(querySkuPK.get(child.getCmaterialvid()));
-				child.setCmaterialid(querySkuPK.get(child.getCmaterialvid()));
+				child.setCmaterialvid(skuPK);
+				child.setCmaterialid(skuPK);
 				//赠品默认值处理
 				if(child.getBlargessflag() == null) {
 					child.setBlargessflag(UFBoolean.FALSE);
@@ -268,9 +270,8 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
     return util.queryBills(whereSql.toString());
   }
   
-  private Map<String, String> querySkuPK(SaleOrderVO[] aggs) {
+  private Map<String, String> queryHelpSkuPK(SaleOrderVO[] aggs) {
 		Map<String, String> helpcodesAndsku_map = new HashMap<String, String>();
-		Map<String, String> skucodeAndPK_map = new HashMap<String, String>();
 		Set<String> helpcodes = new HashSet<String>();
 		for(AggregatedValueObject agg : aggs) {
 			CircularlyAccessibleValueObject[] childrenVO = agg.getChildrenVO();
@@ -280,7 +281,6 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 		}
 		SqlBuilder sb = new SqlBuilder();
 		sb.append(" materialmnecode", helpcodes.toArray(new String[0]));
-		sb.append(" or code", helpcodes.toArray(new String[0]));
 		try {
 			NCObject[] ncobjects = MDPersistenceService.lookupPersistenceQueryService().queryBillOfNCObjectByCond(MaterialVO.class, 
 					sb.toString(), 
@@ -289,7 +289,36 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 			if(ncobjects != null && ncobjects.length > 0) {
 				for(NCObject obj : ncobjects) {
 					//助记码
-					helpcodesAndsku_map.put((String)obj.getAttributeValue("materialmnecode"), (String)obj.getAttributeValue("pk_material"));
+					if(!StringUtils.isEmpty((String)obj.getAttributeValue("materialmnecode"))) {
+						helpcodesAndsku_map.put((String)obj.getAttributeValue("materialmnecode"), (String)obj.getAttributeValue("pk_material"));
+					}
+				}
+			}
+			
+		} catch (MetaDataException e) {
+			ExceptionUtils.wrappException(e);
+		}
+		return helpcodesAndsku_map;
+	}
+  
+  private Map<String, String> querySkuCodePK(SaleOrderVO[] aggs) {
+		Map<String, String> helpcodesAndsku_map = new HashMap<String, String>();
+		Set<String> helpcodes = new HashSet<String>();
+		for(AggregatedValueObject agg : aggs) {
+			CircularlyAccessibleValueObject[] childrenVO = agg.getChildrenVO();
+			for(CircularlyAccessibleValueObject child : childrenVO) {
+				helpcodes.add((String)child.getAttributeValue("cmaterialvid"));
+			}
+		}
+		SqlBuilder sb = new SqlBuilder();
+		sb.append(" code", helpcodes.toArray(new String[0]));
+		try {
+			NCObject[] ncobjects = MDPersistenceService.lookupPersistenceQueryService().queryBillOfNCObjectByCond(MaterialVO.class, 
+					sb.toString(), 
+					new String[]{"materialmnecode", "code"}, 
+					true);
+			if(ncobjects != null && ncobjects.length > 0) {
+				for(NCObject obj : ncobjects) {
 					//物料编码
 					helpcodesAndsku_map.put((String)obj.getAttributeValue("code"), (String)obj.getAttributeValue("pk_material"));
 				}

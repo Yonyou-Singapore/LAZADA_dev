@@ -186,7 +186,9 @@ public class SaleOrderSaveDefValue {
 
     // 单据日期
     UFDate busdate = AppBsContext.getInstance().getBusiDate();
-    keyValue.setHeadValue(SaleOrderHVO.DBILLDATE, busdate);
+    if(busdate == null) {
+    	keyValue.setHeadValue(SaleOrderHVO.DBILLDATE, busdate);
+    }
 
     String pk_group = AppBsContext.getInstance().getPkGroup();
     keyValue.setHeadValue(SaleOrderHVO.PK_GROUP, pk_group);

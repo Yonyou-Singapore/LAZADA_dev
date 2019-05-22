@@ -175,6 +175,8 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,true,null);
 
 				Logger.info("调用数据通获取原单列表接口【getOrders】返回数据" + retStr);
+				//保存请求数据
+				this.saveResponseStr(url,token ,iosstartDate, isoenddate,true,null);
 				// OrderListResult orderList = processResStr(retStr);
 				LazadaGetOrderListDataResponse lazadaGetOrderListDataResponse = new Gson()
 						.fromJson(retStr, LazadaGetOrderListDataResponse.class);
@@ -217,6 +219,21 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 			Logger.error(e);
 		}
 		return result;
+	}
+	
+	/**
+	 * 返回数据先存储
+	 * @param url
+	 * @param token
+	 * @param iosstartDate
+	 * @param isoenddate
+	 * @param b
+	 * @param object
+	 */
+	private void saveResponseStr(String url, String token, String iosstartDate,
+			String isoenddate, boolean b, Object object) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private class InvokeDownload implements Callable<Map<String, Object>> {
