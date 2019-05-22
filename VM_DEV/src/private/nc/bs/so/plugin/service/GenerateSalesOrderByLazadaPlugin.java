@@ -146,7 +146,7 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 	private SaleOrderVO[] contructSaleOrderVO(List<LazadaViewVO> lazadaviewvos) {
 		if(lazadaviewvos == null || lazadaviewvos.size() < 1) {
 			return null;
-		}
+		} 
 		List<String> orderids = new ArrayList<String>();
 		List<SaleOrderVO> saleordervos = new ArrayList<SaleOrderVO>();
 		//±íÍ·list
