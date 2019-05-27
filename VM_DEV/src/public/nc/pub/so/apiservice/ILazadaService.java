@@ -42,4 +42,10 @@ public interface ILazadaService {
 	 * @return
 	 */
 	List<String> queryExistLazadaOrder(List<String> orders);
+	
+	/**
+	 * œ¬‘ÿ‘≠µ•
+	 * @throws BusinessException 
+	 */
+	public void downloadOrderCenter() throws BusinessException;
 }
