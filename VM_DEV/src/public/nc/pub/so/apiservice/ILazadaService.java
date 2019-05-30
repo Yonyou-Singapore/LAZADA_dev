@@ -7,6 +7,7 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDate;
 import nc.vo.so.m30.entity.SaleOrderVO;
 import nc.vo.so.restapi.LazadaAggVO;
 
@@ -48,4 +49,11 @@ public interface ILazadaService {
 	 * @throws BusinessException 
 	 */
 	public void downloadOrderCenter() throws BusinessException;
+	
+	/**
+	 * 下载选定的原单
+	 * @throws BusinessException 
+	 */
+	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException;
+	
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.so.plugin.service.LazadaGetOrderService;
+import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
 import nc.impl.pubapp.pattern.data.bill.BillOperator;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
@@ -14,6 +15,7 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillVO;
 import nc.pub.so.apiservice.ILazadaService;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDate;
 import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.so.restapi.LazadaAggVO;
@@ -75,5 +77,11 @@ public class LazadaServiceImpl implements ILazadaService {
 	public void downloadOrderCenter() throws BusinessException {
 		LazadaGetOrderService lazadaservice = new LazadaGetOrderService();
 		lazadaservice.executeTask(null);
+	}
+	
+	@Override
+	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException {
+		LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
+		lazadaservice.execute(platform, startdate,enddate);
 	}
 }
