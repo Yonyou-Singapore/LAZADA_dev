@@ -6,8 +6,10 @@ import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
+import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.so.plugin.service.LazadaGetOrderService;
 import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
+import nc.bs.so.plugin.service.LazadaReadyToShopService;
 import nc.impl.pubapp.pattern.data.bill.BillOperator;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
@@ -83,5 +85,24 @@ public class LazadaServiceImpl implements ILazadaService {
 	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException {
 		LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
 		lazadaservice.execute(platform, startdate,enddate);
+	}
+	
+	
+	/**
+	 * 发货接口
+	 * @param String order_item_ids lazada原单物品ID，格式为"[2132243,132343]"
+	 * @param String shipProvider lazada运输供应商
+	 * @param String trackingNo  快递追踪号
+	 * @param String country 国家
+	 * 
+	 */
+	
+	@Override
+	public String updateLazadaOrderStatus(String order_item_ids, String platform,String shipProvider,String trackingNo,String country) throws BusinessException {
+		LazadaReadyToShopService lazadaservice = new LazadaReadyToShopService();
+		//BgWorkingContext bgwc = new BgWorkingContext();
+		//lazadaservice.executeTask(null);
+		lazadaservice.execute(order_item_ids,platform, shipProvider,trackingNo,country);
+		return "";
 	}
 }

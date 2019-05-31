@@ -56,4 +56,14 @@ public interface ILazadaService {
 	 */
 	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException;
 	
+	/**
+	 * 更新lazada订单状态到readytoship
+	 * @throws BusinessException 
+	 * @param String order_item_ids lazada原单物品ID，格式为"[2132243,132343]"
+	 * @param String shipProvider lazada运输供应商
+	 * @param String trackingNo  快递追踪号
+	 * @param String country 国家
+	 */
+	public String updateLazadaOrderStatus(String order_item_ids, String platform,String shipProvider,String trackingNo,String country) throws BusinessException;
+	
 }

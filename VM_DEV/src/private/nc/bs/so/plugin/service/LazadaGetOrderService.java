@@ -63,8 +63,7 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 	private ILazadaService lazadaService;
 	
 	@Override
-	public PreAlertObject executeTask(BgWorkingContext arg0)
-			throws BusinessException {
+	public PreAlertObject executeTask(BgWorkingContext arg0)throws BusinessException {
 
 		String result = "";
 		

@@ -117,6 +117,95 @@ public class LazadaClientService {
 			return null;
 		}
 	}
+ 
+	  	/**
+		 * 获取发货供应商
+		 * @param orderId
+		 * @return
+		 */
+	
+        public String GetShipmentProviders(String url, String accessToken) {
+		
+		try {
+			
+			
+			LazopClient client = new LazopClient(url, key, serviceSecret);
+			LazopRequest request = new LazopRequest();
+			request.setApiName("/shipment/providers/get");
+			request.setHttpMethod("GET");
+			LazopResponse response = client.execute(request, accessToken);
+			System.out.println(response.getBody());
+			
+			return response.getBody();
+
+		} catch (Exception e) {
+			
+			Logger.error("鏉ヨ禐杈惧钩鍙拌皟鐢ㄥ埛鏂癮ccess_token鎺ュ彛寮傚父" + e.getMessage(), e);
+			return null;
+		}
+	}
+
+  
+     /**
+	 * 订单打包
+	 * @param orderId
+	 * @return
+	 */
+	
+       public String SetStatusToPackedByMarketplace(String url, String accessToken, String orderItemIds,String shipProvider,String trackingNo) {
+		
+		try {
+			
+			
+			LazopClient client = new LazopClient(url, key, serviceSecret);
+			LazopRequest request = new LazopRequest();
+			request.setApiName("/order/pack");
+			request.addApiParameter("shipping_provider", "Aramax");
+			request.addApiParameter("delivery_type", "dropship");
+			request.addApiParameter("order_item_ids", "[1530553,1830236]");
+			LazopResponse response = client.execute(request, accessToken);
+			System.out.println(response.getBody());
+			Thread.sleep(10);
+				
+			
+			return response.getBody();
+
+		} catch (Exception e) {
+			
+			Logger.error("鏉ヨ禐杈惧钩鍙拌皟鐢ㄥ埛鏂癮ccess_token鎺ュ彛寮傚父" + e.getMessage(), e);
+			return null;
+		}
+	}
+  
+  
+  
+  /**
+	 * 订单回写发货
+	 * @param orderId
+	 * @return
+	 */
+	
+ public String SetStatusToReadyToShip(String url, String accessToken, String orderItemIds,String shipProvider,String trackingNo) {
+		
+		try {
+			
+			LazopClient client = new LazopClient(url, key, serviceSecret);
+			LazopRequest request = new LazopRequest();
+			request.setApiName("/order/rts");
+			request.addApiParameter("delivery_type", "dropship");
+			request.addApiParameter("order_item_ids", orderItemIds);
+			request.addApiParameter("shipment_provider", shipProvider);
+			request.addApiParameter("tracking_number", trackingNo);
+			LazopResponse response = client.execute(request, accessToken);			
+			
+			return response.getBody();
+
+		} catch (Exception e) {
+			
+			Logger.error("鏉ヨ禐杈惧钩鍙拌皟鐢ㄥ埛鏂癮ccess_token鎺ュ彛寮傚父" + e.getMessage(), e);
+			return null;
+		}
+	}
 	
 	
 
