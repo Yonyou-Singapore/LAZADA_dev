@@ -152,27 +152,25 @@ public class LazadaClientService {
 	 * @return
 	 */
 	
-       public String SetStatusToPackedByMarketplace(String url, String accessToken, String orderItemIds,String shipProvider,String trackingNo) {
+       public String SetStatusToPackedByMarketplace(String url, String accessToken, String orderItemIds,String shipProvider) {
 		
-		try {
-			
+		try {	
 			
 			LazopClient client = new LazopClient(url, key, serviceSecret);
 			LazopRequest request = new LazopRequest();
 			request.setApiName("/order/pack");
-			request.addApiParameter("shipping_provider", "Aramax");
+			request.addApiParameter("shipping_provider", shipProvider);
 			request.addApiParameter("delivery_type", "dropship");
-			request.addApiParameter("order_item_ids", "[1530553,1830236]");
+			request.addApiParameter("order_item_ids", orderItemIds);
 			LazopResponse response = client.execute(request, accessToken);
 			System.out.println(response.getBody());
 			Thread.sleep(10);
 				
-			
 			return response.getBody();
 
 		} catch (Exception e) {
 			
-			Logger.error("来赞达平台调用刷新access_token接口异常" + e.getMessage(), e);
+			Logger.error("SetStatusToPackedByMarketplaceʧ��" + e.getMessage(), e);
 			return null;
 		}
 	}

@@ -30,6 +30,8 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderDetailResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderListDataResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderListResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderListsRequest;
+import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaPackedByMarketDataResponse;
+import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaPackedByMarketResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaProductsInfo;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaProductsInfoDataResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaShipProviders;
@@ -205,7 +207,50 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 	        	Logger.info("调用来赞达接口【getShipmentProviders】没有找到默认发货供应商");
 	        	throw new BusinessException("没有找到默认运输供应商");	
 	        }
-		
+	        
+	        
+	        
+	        
+	        
+	        
+	        //SetStatusToPackedByMarketplace
+			//调用lazada接口请求运单号
+	        String shipment_provider = shipment_providers[0].getName();
+	        StringBuffer trackingInfo = new StringBuffer();
+	        LazadaPackedByMarketResponse lazadaPackedByMarketResponse = new LazadaPackedByMarketResponse();
+			
+	        
+	        try {
+	        	
+	        	
+	        	String retPackMarket = lazadaClientService.SetStatusToPackedByMarketplace(url, token, order_item_ids,shipment_provider);
+	            Logger.info("调用lazada接口SetStatusToPackedByMarketplace" + retPackMarket);
+	            if (org.apache.commons.lang.StringUtils.isNotEmpty(retPackMarket)) {
+		            LazadaPackedByMarketDataResponse lazadaPackedByMarketDataResponse = new Gson().fromJson(retPackMarket, LazadaPackedByMarketDataResponse.class);
+		            lazadaPackedByMarketResponse = lazadaPackedByMarketDataResponse.getData();
+	        	 }
+	            
+	           
+				
+				
+				if (lazadaPackedByMarketResponse != null) {
+	                if (lazadaPackedByMarketResponse.getPacked_Market_infos().length > 0) {
+	                   trackingInfo.append(lazadaPackedByMarketResponse.getPacked_Market_infos()[0].getTracking_number());
+	                    
+	                } else {
+	                	throw new BusinessException("调用来赞达接口【SetStatusToPackedByMarketplace】返回数据转换json异常");  
+	                }
+	            }
+	            
+	        } catch (Exception e) {
+	        	Logger.error("调用来赞达接口【getShipmentProviders】返回数据转换json异常", e);
+	        	throw new BusinessException("调用来赞达接口【getShipmentProviders】返回数据转换json异常" + e);
+	        }
+			
+	   
+	        
+	        
+	        //SetStatusToPackedByMarketplace
 	        
 	        //调用lazada接口发货
 	        
@@ -214,8 +259,7 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 			
 	        try{
 	        	
-	        	String shipment_provider = shipment_providers[0].getName();
-				String retStr = lazadaClientService.SetStatusToReadyToShip(url,token,order_item_ids,shipment_provider, trackingNo);
+				String retStr = lazadaClientService.SetStatusToReadyToShip(url,token,order_item_ids,shipment_provider, trackingInfo.toString());
 
 				Logger.info("调用lazada接口将订单状态设置为发货" + retStr);
 				
