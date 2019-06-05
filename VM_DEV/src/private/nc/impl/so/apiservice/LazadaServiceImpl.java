@@ -10,6 +10,7 @@ import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.so.plugin.service.LazadaGetOrderService;
 import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
 import nc.bs.so.plugin.service.LazadaReadyToShopService;
+import nc.bs.so.plugin.service.TaobaoGetOrderService;
 import nc.impl.pubapp.pattern.data.bill.BillOperator;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
@@ -48,6 +49,8 @@ public class LazadaServiceImpl implements ILazadaService {
 			ExceptionUtils.wrappBusinessException(e.getMessage());
 		}
 	}
+	
+
 
 	@Override
 	public List<String> queryExistLazadaOrder(List<String> orders) {
@@ -80,6 +83,13 @@ public class LazadaServiceImpl implements ILazadaService {
 		LazadaGetOrderService lazadaservice = new LazadaGetOrderService();
 		lazadaservice.executeTask(null);
 	}
+	
+	@Override
+	public void downloadTaobaoOrderCenter() throws BusinessException {
+		TaobaoGetOrderService taobaoservice = new TaobaoGetOrderService();
+		taobaoservice.executeTask(null);
+	}
+	
 	
 	@Override
 	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException {

@@ -30,7 +30,7 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 将JSON字符串转化为对象
+	 * 灏咼SON瀛楃涓茶浆鍖栦负瀵硅薄
 	 * 
 	 * @param str
 	 * @param clazz
@@ -45,7 +45,7 @@ public class TransferUtils {
 				obj = gson.fromJson(str, clazz);
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new RuntimeException("json字符串转化失败", e);
+				throw new RuntimeException("json瀛楃涓茶浆鍖栧け", e);
 			}
 		}
 		return obj;
@@ -56,7 +56,7 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 将对象转化为JSON字符串
+	 * 灏嗗璞¤浆鍖栦负JSON瀛楃涓�
 	 * 
 	 * @param obj
 	 * @return
@@ -67,10 +67,10 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 将json 字符串转化为list对象
+	 * 灏唈son 瀛楃涓茶浆鍖栦负list瀵硅薄
 	 * 
 	 * @param str
-	 * @param @param type 返回类型(如:java.lang.reflect.Type type = new
+	 * @param @param type 杩斿洖绫诲瀷(濡�java.lang.reflect.Type type = new
 	 *        com.google.gson.reflect.TypeToken<List<User>>() { }.getType();)
 	 * @return
 	 */
@@ -82,13 +82,13 @@ public class TransferUtils {
 			listObj = gson.fromJson(str, type);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("转化为list出错", e);
+			throw new RuntimeException("杞寲涓簂ist鍑洪敊", e);
 		}
 		return listObj;
 	}
 
 	/**
-	 * 将list 转化为json 字符串
+	 * 灏唋ist 杞寲涓簀son 瀛楃涓�
 	 * 
 	 * @param list
 	 * @return
@@ -99,13 +99,13 @@ public class TransferUtils {
 			str = gson.toJson(list);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("list转json字符串出错", e);
+			throw new RuntimeException("list杞琷son瀛楃涓插嚭閿", e);
 		}
 		return str;
 	}
 
 	/**
-	 * 将输入流转化为对象
+	 * 灏嗚緭鍏ユ祦杞寲涓哄璞�
 	 * 
 	 * @param is
 	 * @return
@@ -118,13 +118,13 @@ public class TransferUtils {
 			obj = in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("输入流转化为对象出错", e);
+			throw new RuntimeException("杈撳叆娴佽浆鍖栦负瀵硅薄鍑洪敊", e);
 		}
 		return obj;
 	}
 
 	/**
-	 * 关闭流
+	 * 鍏抽棴娴�
 	 */
 	public void closeStream(InputStream is) {
 		if (null != is) {
@@ -137,7 +137,7 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 打开连接流
+	 * 鎵撳紑杩炴帴娴�
 	 * 
 	 * @param path
 	 */
@@ -156,13 +156,13 @@ public class TransferUtils {
 					"application/x-java-serialized-object,charset=utf-8");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("打开连接失败");
+			throw new RuntimeException("鎵撳紑杩炴帴澶辫触");
 		}
 		return conn;
 	}
 
 	/**
-	 * 得到物料访问服务器路径
+	 * 寰楀埌鐗╂枡璁块棶鏈嶅姟鍣ㄨ矾寰�
 	 * 
 	 * @return
 	 */
@@ -185,7 +185,7 @@ public class TransferUtils {
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("传输NC领域产品出错", e);
+			throw new RuntimeException("浼犺緭NC棰嗗煙浜у搧鍑洪敊", e);
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 将map 转化为json 字符串
+	 * 灏唌ap 杞寲涓簀son 瀛楃涓�
 	 * 
 	 * @param list
 	 * @return
@@ -219,13 +219,13 @@ public class TransferUtils {
 			str = gson.toJson(map);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("map转json字符串出错", e);
+			throw new RuntimeException("map杞琷son瀛楃涓插嚭閿", e);
 		}
 		return str;
 	}
 
 	/**
-	 * 封装传输数据类 无返回值
+	 * 灏佽浼犺緭鏁版嵁绫�鏃犺繑鍥炲�
 	 * 
 	 * @param servletName
 	 * @param list
@@ -245,12 +245,12 @@ public class TransferUtils {
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("传输NC领域产品出错", e);
+			throw new RuntimeException("浼犺緭NC棰嗗煙浜у搧鍑洪敊", e);
 		}
 	}
 
 	/**
-	 * 返回服务器数据
+	 * 杩斿洖鏈嶅姟鍣ㄦ暟鎹�
 	 * 
 	 * @param conn
 	 * @return
@@ -263,7 +263,7 @@ public class TransferUtils {
 			obj = ois.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("服务器返回数据出现错误", e);
+			throw new RuntimeException("鏈嶅姟鍣ㄨ繑鍥炴暟鎹嚭鐜伴敊璇", e);
 		} finally {
 			if (null != ois) {
 				try {
@@ -277,7 +277,7 @@ public class TransferUtils {
 	}
 
 	/**
-	 * 按字节读取输入流
+	 * 鎸夊瓧鑺傝鍙栬緭鍏ユ祦
 	 * 
 	 * @param is
 	 * @return
@@ -294,13 +294,13 @@ public class TransferUtils {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("读取输入流出错", e);
+			throw new RuntimeException("璇诲彇杈撳叆娴佸嚭閿", e);
 		}
 		return postResult.toString();
 	}
 
 	/**
-	 * 将json串转换为Map对象
+	 * 灏唈son涓茶浆鎹负Map瀵硅薄
 	 * 
 	 * @param json
 	 * @return
@@ -324,7 +324,7 @@ public class TransferUtils {
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("传输NC领域产品出错", e);
+			throw new RuntimeException("浼犺緭NC棰嗗煙浜у搧鍑洪敊", e);
 		}
 	}
 }

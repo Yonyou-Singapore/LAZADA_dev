@@ -37,6 +37,7 @@ public interface ILazadaService {
 	 */
 	void insertlazadaresponse(LazadaBillVO[] headvos, LazadaBillItemVO[] itemvos);
 	
+	
 	/**
 	 * ejb 查询
 	 * @param orders
@@ -49,6 +50,12 @@ public interface ILazadaService {
 	 * @throws BusinessException 
 	 */
 	public void downloadOrderCenter() throws BusinessException;
+	
+	/**
+	 * 下载taobao原单
+	 * @throws BusinessException 
+	 */
+	public void downloadTaobaoOrderCenter() throws BusinessException;
 	
 	/**
 	 * 下载选定的原单
