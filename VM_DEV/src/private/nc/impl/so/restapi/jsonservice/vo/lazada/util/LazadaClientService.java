@@ -36,8 +36,11 @@ public class LazadaClientService {
 			request.setApiName("/orders/get");
 			request.setHttpMethod("GET");
 			
-			request.addApiParameter("created_before",endTime);
-			request.addApiParameter("created_after",startTime);
+			if(updateDate==null || updateDate.length()<=0){
+				request.addApiParameter("created_before",endTime);
+				request.addApiParameter("created_after",startTime);
+			}
+			
 			if(updateDate!=null && updateDate.length()>0){
 				request.addApiParameter("update_after",updateDate);
 			}

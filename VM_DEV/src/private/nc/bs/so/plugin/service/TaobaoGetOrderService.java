@@ -185,6 +185,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
 			iosstartDate = normalFormat.format(startdate);
 		
 		} catch (Exception e1) {
+			ExceptionUtils.wrappBusinessException(e1.getMessage());
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}//开始时间
@@ -275,6 +276,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
                 return resultString;
                 
             } catch (Exception e) {
+            	ExceptionUtils.wrappBusinessException(e.getMessage());
                 Logger.error(e.getMessage(), e);
                 return null;
             }
@@ -310,6 +312,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
     private String getCreatedDetails(String token,MCloudRequest request, Map<String, Object> map) {
 
         try {
+        	
             OrderSourceRequest orderSourceRequest = (OrderSourceRequest) request.getRequest();
             orderSourceRequest.setFields("tid,num,status,modified");
             request.setRequest(orderSourceRequest);
@@ -319,6 +322,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
             
             return serviceUtil.execute(request);
         } catch (Exception e) {
+        	ExceptionUtils.wrappBusinessException(e.getMessage());
             Logger.error(e.getMessage(), e);
             return null;
         }
@@ -340,6 +344,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
             }
             return converter.fromJson(map, cl);
         } catch (Exception e) {
+        	ExceptionUtils.wrappBusinessException(e.getMessage());
             Logger.error(e.getMessage(), e);
             return null;
         }

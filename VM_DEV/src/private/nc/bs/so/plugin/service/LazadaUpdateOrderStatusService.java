@@ -75,7 +75,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 			
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			
-			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//开始时间
+			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//寮�鏃堕棿
 		
 			for(SysInitVO sysVO: sysTokenlist){
 				
@@ -86,7 +86,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 			}
 		} catch (Exception e) {
 
-			result = "店铺下载原单出错";
+			result = "搴楅摵涓嬭浇鍘熷崟鍑洪敊";
 		} finally {
 		
 		}
@@ -112,7 +112,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 	}
 
 	/**
-	 * 处理按拍下时间进行同步的订单
+	 * 澶勭悊鎸夋媿涓嬫椂闂磋繘琛屽悓姝ョ殑璁㈠崟
 	 * 
 	 * @param param
 	 * @param request
@@ -123,22 +123,28 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 	private String getUpdatedRange(String token,String orgId) {
 		
 		StringBuffer resultString = new StringBuffer();
-		//需要跟踪的订单状态
+		//闇�璺熻釜鐨勮鍗曠姸鎬�
 		List <String> statusList = new ArrayList<String>();		
 		statusList.add("delivered");
 		
 		
-		List<String> orderList = new ArrayList<String>();
-		//取库里面上次更新的最晚时间
-		orderList = queryLazadaOrderLastUpdateTime(orgId);
+		List<String> timeList = new ArrayList<String>();
+		//鍙栧簱閲岄潰涓婃鏇存柊鐨勬渶鏅氭椂闂�
+		timeList = queryLazadaOrderLastUpdateTime(orgId);
 		
-		if(!CollectionUtils.isEmpty(orderList)){
+		if(!CollectionUtils.isEmpty(timeList)){
 							
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date updatedDay = new Date();
 				
-				if(orderList.get(0)!=null && orderList.get(0).length()>0){
-					updatedDay = new Date(Long.parseLong(orderList.get(0)));
+				if(timeList.get(0)!=null && timeList.get(0).length()>0){
+					try {
+						//updatedDay = format.parse("2019-04-01 00:00:00");
+						updatedDay = format.parse(timeList.get(0));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 				for(String url : urlList){
@@ -150,7 +156,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 	
 	
 	/**
-	 * 处理按拍下时间进行同步的订单
+	 * 澶勭悊鎸夋媿涓嬫椂闂磋繘琛屽悓姝ョ殑璁㈠崟
 	 * 
 	 * @param param
 	 * @param request
@@ -172,12 +178,12 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 		int pageMax = 1;
 		try {
 		
-			//获取前台选择的时间区间
+			//鑾峰彇鍓嶅彴閫夋嫨鐨勬椂闂村尯闂�
 			
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			
-			SysInitVO sysvostart = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA01");//开始时间
-			SysInitVO sysvoend = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA02");//结束时间
+			SysInitVO sysvostart = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA01");//寮�鏃堕棿
+			SysInitVO sysvoend = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA02");//缁撴潫鏃堕棿
 			
 			
 			DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");   
@@ -195,12 +201,13 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 
 			do {
 				page++;
-
-				Date updateTimestamp = new Date();
+				
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String updateTimestamp = format.format(new Date());
 				
 				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,iosupdateDate);
 
-				Logger.info("调用数据通获取原单列表接口【getOrders】返回数据" + retStr);
+				Logger.info("璋冪敤鏁版嵁閫氳幏鍙栧師鍗曞垪琛ㄦ帴鍙ｃ�getOrders銆戣繑鍥炴暟鎹" + retStr);
 				// OrderListResult orderList = processResStr(retStr);
 				LazadaGetOrderListDataResponse lazadaGetOrderListDataResponse = new Gson()
 						.fromJson(retStr, LazadaGetOrderListDataResponse.class);
@@ -212,16 +219,16 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 							lazadaGetOrderListResponse = lazadaGetOrderListDataResponse
 									.getData();
 						} catch (Exception e) {
-							Logger.error("调用数据通获取原单列表接口【getOrders】返回数据转换json异常",
+							Logger.error("璋冪敤鏁版嵁閫氳幏鍙栧師鍗曞垪琛ㄦ帴鍙ｃ�getOrders銆戣繑鍥炴暟鎹浆鎹son寮傚父",
 							e);
 						}
 						if (lazadaGetOrderListResponse != null) {
-							// 订单总数
+							// 璁㈠崟鎬绘暟
 							totalNum = lazadaGetOrderListResponse.getCount();
-							// 总页数
+							// 鎬婚〉鏁�
 							pageMax = (totalNum % pageSize == 0 ? totalNum
 									/ pageSize : totalNum / pageSize + 1);
-							// 订单列表
+							// 璁㈠崟鍒楄〃
 							List<LazadaGetOrderDetailResponse> items = lazadaGetOrderListResponse
 									.getOrders();
 
@@ -230,7 +237,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 							taskList.add(new InvokeDownload(items,updateTimestamp));
 						}
 					} else {
-						return "取到的数据为空!";
+						return "鍙栧埌鐨勬暟鎹负绌�";
 					}
 				}
 
@@ -248,9 +255,9 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 	private class InvokeDownload implements Callable<Map<String, Object>> {
 		
 		List<LazadaGetOrderDetailResponse> itemsList;
-		Date updateTimestamp;
+		String updateTimestamp;
 
-		public InvokeDownload(List<LazadaGetOrderDetailResponse> itemsList,Date updateTimestamp)
+		public InvokeDownload(List<LazadaGetOrderDetailResponse> itemsList,String updateTimestamp)
 				throws Exception {
 		
 			this.itemsList = itemsList;
@@ -262,7 +269,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 
 			Map<String, Object> newmap = new HashMap<String, Object>();
 			
-			dbProcessForLazadaStatusUpdate(itemsList,Long.toString(updateTimestamp.getTime()));
+			dbProcessForLazadaStatusUpdate(itemsList,updateTimestamp);
 	
 			return newmap;
 		}

@@ -50,14 +50,24 @@ public class TaobaoBillTransform {
 			billvo.setId(trade.getTid().toString());
 			billvo.setOrder_id(trade.getTid().toString());
 			
-			String price = trade.getPrice();
-			price=price.replace(",","");
-			billvo.setPrice(new BigDecimal(price));
+		
 			
-			String voucher = trade.getDiscountFee();
-			voucher=voucher.replace(",","");
-			billvo.setVoucher(new BigDecimal(voucher));
-			billvo.setShipping_fee(new BigDecimal(trade.getPostFee()));
+			if(trade.getPrice()!=null){
+				String price = trade.getPrice();
+				price=price.replace(",","");
+				billvo.setPrice(new BigDecimal(price));
+			}
+			
+			
+			if(trade.getDiscountFee()!=null){
+				String voucher = trade.getDiscountFee();
+				voucher=voucher.replace(",","");
+				billvo.setVoucher(new BigDecimal(voucher));
+			}
+			
+			if(trade.getPostFee()!=null){
+				billvo.setShipping_fee(new BigDecimal(trade.getPostFee()));
+			}
 			billvo.setCustomer_first_name(trade.getReceiverName());
 			billvo.setCustomer_last_name(trade.getReceiverName());
 			
@@ -75,7 +85,9 @@ public class TaobaoBillTransform {
 			billvo.setRemarks(trade.getBuyerMessage());
 			//billvo.setOrder_number(trade.getNumIid());
 			//billvo.setPromised_shipping_times(order.getPromised_shipping_times());
-			billvo.setItems_count(Integer.parseInt(trade.getNum().toString()));
+			if(trade.getNum()!=null){
+				billvo.setItems_count(Integer.parseInt(trade.getNum().toString()));
+			}
 			billvo.setCreated_at(created_at);
 		
 			billvo.setShipping_address1(trade.getReceiverAddress());
@@ -182,7 +194,10 @@ public class TaobaoBillTransform {
 			//billitem.setPackage_id(product.getPackage_id());
 			billitem.setShipping_type(order.getShippingType());
 			billitem.setShop_id(order.getEtShopName());
-			billitem.setShop_sku(order.getNumIid().toString());
+			
+			if(order.getNumIid()!=null){
+				billitem.setShop_sku(order.getNumIid().toString());
+			}
 			billitem.setInvoice_number(order.getInvoiceNo());
 			//billitem.setIs_digital(product.getIs_digital());
 			

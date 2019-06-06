@@ -2,8 +2,11 @@ package nc.bs.so.plugin.service;
 
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.taobao.api.domain.Trade;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
@@ -27,7 +30,7 @@ import nc.vo.sm.UserVO;
 public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	
 	/**
-	 * 锟斤拷锟斤拷锟斤拷锟斤拷
+	 * 閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹
 	 * @param conn
 	 * @param jsonstr
 	 * @return
@@ -35,14 +38,14 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	abstract String requestSystem(URLConnection conn, String jsonstr);
 	
 	/**
-	 * 锟斤拷锟斤拷锟斤拷锟斤拷json
+	 * 閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹json
 	 * @param data
 	 * @return
 	 */
 	abstract String constructRequestJson(List<Map<String, Object>> data);
 	
 	/**
-	 * 锟斤拷锟斤拷json为supervo
+	 * 閿熸枻鎷烽敓鏂ゆ嫹json涓簊upervo
 	 * @param response
 	 * @return
 	 */
@@ -66,7 +69,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	public void dbProcessForLazadaStatusUpdate(List<LazadaGetOrderDetailResponse> itemsList,String updateTimestamp) throws DAOException {
 	
 		
-		//鎵归噺鏇存柊鐘舵��
+		//閹靛綊鍣洪弴瀛樻煀閻樿埖锟斤拷
 		List<Map<String,String>> executeQuery = new ArrayList<Map<String,String>>();
 
 		StringBuffer caseString = new StringBuffer();
@@ -91,7 +94,42 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		
 		try {	
 			int i = dao.executeUpdate(sql.toString());
-			Logger.info("鏈鍏辨垚鍔熸洿鏂�"+i+"鏉＄姸鎬�");
+			Logger.info("閺堫剚顐奸崗杈ㄥ灇閸旂喐娲块弬锟�+i+");
+		} catch (DAOException e) {
+			ExceptionUtils.wrapException(e);
+		}
+		
+	}
+	
+		public void dbProcessForTaobaoStatusUpdate(Trade trade,String updateTimestamp) throws DAOException {
+	
+		
+		//閹靛綊鍣洪弴瀛樻煀閻樿埖锟斤拷
+		List<Map<String,String>> executeQuery = new ArrayList<Map<String,String>>();
+
+		StringBuffer caseString = new StringBuffer();
+		StringBuffer idCondition = new StringBuffer();
+		
+		caseString.append("WHEN '"+trade.getTid()+"' THEN '"+trade.getStatus()+"' ");
+		idCondition.append("'"+trade.getTid()+"',");
+		
+		
+		
+		String idString = idCondition.substring(0, idCondition.length()-1);
+		StringBuffer sql = new StringBuffer();
+		sql.append("UPDATE DATA_LAZADA_BILL SET STATUSES = CASE order_id " 
+		        +caseString.toString()
+		        +"END, "
+		        +"lastupdatetime = '"
+		        +updateTimestamp
+				+"' WHERE order_id IN ("
+				+idString);
+		sql.append(")");
+		BaseDAO dao = new BaseDAO();
+		
+		try {	
+			int i = dao.executeUpdate(sql.toString());
+			Logger.info("閺堫剚顐奸崗杈ㄥ灇閸旂喐娲块弬锟�+i+");
 		} catch (DAOException e) {
 			ExceptionUtils.wrapException(e);
 		}
@@ -118,6 +156,19 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		List<String> executeQuery = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL");
+		BaseDAO dao = new BaseDAO();
+		try {
+			executeQuery = (List<String>) dao.executeQuery(sql.toString(), new ColumnListProcessor());
+		} catch (DAOException e) {
+			ExceptionUtils.wrapException(e);
+		}
+		return executeQuery;
+	}
+	
+	public List<String> queryTaobaoOrderLastUpdateTime(String orgId) {
+		List<String> executeQuery = new ArrayList<String>();
+		StringBuffer sql = new StringBuffer();
+		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where orgid = 'TAOBAO'");
 		BaseDAO dao = new BaseDAO();
 		try {
 			executeQuery = (List<String>) dao.executeQuery(sql.toString(), new ColumnListProcessor());
