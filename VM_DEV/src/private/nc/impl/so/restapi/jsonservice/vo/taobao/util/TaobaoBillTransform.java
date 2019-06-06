@@ -42,7 +42,7 @@ public class TaobaoBillTransform {
 				created_at = new UFDate(trade.getCreated());
 				updated_at = new UFDate(trade.getModified());
 			} catch (Exception e) {
-				ExceptionUtils.wrapException("瑙ｆ瀽鏃ユ湡閿欒" + e.getMessage(), e);
+				ExceptionUtils.wrapException("time format incorrect:" + e.getMessage(), e);
 			}
 		
 			LazadaBillVO billvo = new LazadaBillVO();
@@ -132,6 +132,10 @@ public class TaobaoBillTransform {
 			//璁剧疆缁勭粐鍙傛暟 bill
 			billvo.setOrgId(orgId);
 			billvo.setRequestUrl(requestUrl);
+			
+			billvo.setPlatform("TAOBAO");
+			billvo.setShopname(trade.getTitle());
+			
 			billList.add(billvo);
 			
 			
@@ -193,7 +197,9 @@ public class TaobaoBillTransform {
 			billitem.setPurchase_order_id(trade.getTid().toString());
 			//billitem.setPackage_id(product.getPackage_id());
 			billitem.setShipping_type(order.getShippingType());
-			billitem.setShop_id(order.getEtShopName());
+			
+			//交易标题，以店铺名作为此标题的值。注:taobao.trades.get接口返回的Trade中的title是商品名称
+			billitem.setShop_id(trade.getTitle());
 			
 			if(order.getNumIid()!=null){
 				billitem.setShop_sku(order.getNumIid().toString());

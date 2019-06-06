@@ -17,7 +17,7 @@ import nc.vo.pub.lang.UFDate;
 
 
 /**
- * lazada 原单VO
+ * lazada 鍘熷崟VO
  * @author ll
  *
  */
@@ -27,8 +27,8 @@ public class LazadaBillTransform {
 	
 	
 	
-	   //转换原单order
-		public LazadaBillVO[] convertLazadaBill(LazadaGetOrderDetailResponse order,String orgId,String requestUrl){
+	   //杞崲鍘熷崟order
+		public LazadaBillVO[] convertLazadaBill(LazadaGetOrderDetailResponse order,String orgId,String requestUrl,List<LazadaProductsInfo> lazadaProductsInfoResponse){
 
 			List<LazadaBillVO> billList = new ArrayList<LazadaBillVO>();
 			
@@ -39,7 +39,7 @@ public class LazadaBillTransform {
 				created_at = new UFDate(format.parse(order.getCreated_at()));
 				updated_at = new UFDate(format.parse(order.getUpdated_at()));
 			} catch (ParseException e) {
-				ExceptionUtils.wrapException("解析日期错误" + e.getMessage(), e);
+				ExceptionUtils.wrapException("瑙ｆ瀽鏃ユ湡閿欒" + e.getMessage(), e);
 			}
 		
 			LazadaBillVO billvo = new LazadaBillVO();
@@ -106,14 +106,18 @@ public class LazadaBillTransform {
 			
 			billvo.setUpdated_at(updated_at);
 			
-			//设置本次更新时间
+			//璁剧疆鏈鏇存柊鏃堕棿
 			Date lastUpdateTime = new Date();
 			billvo.setLastUpdateTime(new UFDate(lastUpdateTime));
 			
 			
-			//设置组织参数 bill
+			//
 			billvo.setOrgId(orgId);
 			billvo.setRequestUrl(requestUrl);
+			
+			billvo.setPlatform("LAZADA");
+			billvo.setShopname(lazadaProductsInfoResponse.get(0).getShop_id());
+			
 			billList.add(billvo);
 			
 			
@@ -125,7 +129,7 @@ public class LazadaBillTransform {
 		}
 	
 	
-	//转换原单orderitem
+	//杞崲鍘熷崟orderitem
 	public LazadaBillItemVO[] convertLazadaBillItem(List<LazadaProductsInfo> orderItemList){
 		List<LazadaBillItemVO> billItemList = new ArrayList<LazadaBillItemVO>();
 		
@@ -178,7 +182,7 @@ public class LazadaBillTransform {
 			billitem.setReturn_status(product.getReturn_status());
 			billitem.setProduct_detail_url(product.getProduct_detail_url());
 			billitem.setProduct_main_image(product.getProduct_main_image());
-			//数量 默认为1 add by weiningc 
+			//鏁伴噺 榛樿涓� add by weiningc 
 			billitem.setQty(new java.math.BigDecimal(1.00));
 			
 			

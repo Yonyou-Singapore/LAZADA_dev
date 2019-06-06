@@ -76,6 +76,9 @@ public class LazadaBillVO extends SuperVO implements Serializable {
     private UFDate updated_at;
     private String requestUrl;
     private UFDate lastupdatetime;
+    
+    private String platform;
+    private String shopname;
 
     public BigDecimal getPrice() {
         return price;
@@ -501,7 +504,21 @@ public class LazadaBillVO extends SuperVO implements Serializable {
 	public void setLastUpdateTime(UFDate lastupdatetime) {
 		this.lastupdatetime = lastupdatetime;
 	}
-	
 
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+	
+	public String getShopname() {
+		return shopname;
+	}
+
+	public void setShopname(String shopname) {
+		this.shopname = shopname;
+	}
 }
 

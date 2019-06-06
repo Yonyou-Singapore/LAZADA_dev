@@ -301,17 +301,10 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 				List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
 				
 				if(existOrder.size()<=0){
-					
-					
-//					dbProcessForInsert(lazadaBillTransform.convertLazadaBill(item,orgId,url));
-//				
-//					dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
-					//交给ejb进行事务管控 add by weiningc 20190428
-					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item,orgId,url), 
+
+					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item,orgId,url,lazadaProductsInfoResponse), 
 							lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
 					
-					//dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
-					//lazadaService.insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item), lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));				
 					lazadaGetOrderDetaillist.add(item);
 
 				}	

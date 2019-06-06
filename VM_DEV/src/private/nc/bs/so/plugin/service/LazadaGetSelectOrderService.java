@@ -314,7 +314,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 //				
 //					dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
 					//交给ejb进行事务管控 add by weiningc 20190428
-					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item,orgId,url), 
+					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item,orgId,url,lazadaProductsInfoResponse), 
 							lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
 					
 					//dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));

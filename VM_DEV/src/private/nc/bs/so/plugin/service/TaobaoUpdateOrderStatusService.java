@@ -2,6 +2,7 @@ package nc.bs.so.plugin.service;
 
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -140,17 +141,22 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 //		statusList.add("TRADE_CLOSED_BY_TAOBAO");
 		
 		
-		List<String> orderList = new ArrayList<String>();
+		List<String> timelist = new ArrayList<String>();
 		//鍙栧簱閲岄潰涓婃鏇存柊鐨勬渶鏅氭椂闂�
-		orderList = queryTaobaoOrderLastUpdateTime(orgId);
+		timelist = queryTaobaoOrderLastUpdateTime(orgId);
 		
-		if(!CollectionUtils.isEmpty(orderList)){
+		if(!CollectionUtils.isEmpty(timelist)){
 							
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date updatedDay = new Date();
 				
-				if(orderList.get(0)!=null && orderList.get(0).length()>0){
-					updatedDay = new Date(Long.parseLong(orderList.get(0)));
+				if(timelist.get(0)!=null && timelist.get(0).length()>0){
+					try {
+						updatedDay = format.parse(timelist.get(0));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				String result = procOrders(token,orgId,updatedDay);	
 				
@@ -170,40 +176,29 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 	 */
 	private String procOrders(String token,String orgId,Date updatedDay) {
 		
+		Date lastModifiedTime = new Date();
 		
 		MCloudRequest mcloudRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
 		String retStr = "";
 		
         try {        
         	String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-    		
-    		SysInitVO sysvostart;
-    		SysInitVO sysvoend;
-    		String isoenddate="" ;
-    		String iosstartDate="" ;
-    			 
 
             //获取店铺信息
             OrderSourceRequest req = new OrderSourceRequest();
             String result = "";
             long page = 0L;
             long pageSize = 80L;
-            
-            
 
             boolean hasNext = false;
             req.setUseHasNext(true);
-
         
             //默认下载等待收货状态
-            
             
            // req.setStatus("WAIT_SELLER_SEND_GOODS");//WAIT_SELLER_SEND_GOODS(等待卖家发货,即:买家已付款)
             req.setType("guarantee_trade,auto_delivery,ec,step,nopaid,tmall_i18n");
 
-         
             List<Callable<Map<String, Object>>> taskList = new ArrayList<Callable<Map<String, Object>>>();
-            
             String resultString = "";
 
 
@@ -217,7 +212,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
                 String fullInfoRet = "";
                 try {
                 	
-                	retStr = getOrderinfolist(token,mcloudRequest, map,updatedDay);
+                	retStr = getOrderinfolist(token,mcloudRequest, map,updatedDay,lastModifiedTime);
                     Logger.info("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据" + retStr);
                 	TradesSoldGetResponse response = null;
                 	
@@ -235,7 +230,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
                                 if (null != list) {
                                     MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
-                                    taskList.add(new InvokeDownload(token,inRequest, list,orgId));
+                                    taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
                                 }
                                 if (StringUtils.isNotBlank(response.getErrorCode())) {
 //        							//刷新token
@@ -273,14 +268,12 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     /**
      * 获取订单列表
      */
-    public String getOrderinfolist(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay) {
+    public String getOrderinfolist(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay,Date lastModifiedTime) {
     	
         if (request != null && request.getRequest() != null) {
-            if (request.getRequest() instanceof OrderSourceRequest) {
-                return getOrderinfomodify(token,request, map,updatedDay);
-            }else {
-                return null;
-            }
+           
+           return getOrderinfomodify(token,request, map,updatedDay,lastModifiedTime);
+            
         } else {
             return null;
         }
@@ -294,17 +287,15 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
      * @param map
      * @return
      */
-    private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay) {
+    private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay,Date lastModifiedTime) {
 
         try {
-        	
-        	
         	TradesSoldIncrementGetRequest req = new TradesSoldIncrementGetRequest();
         	
         	 if (updatedDay != null) {
                  req.setStartModified(updatedDay);
              }            
-             req.setEndModified(new Date());
+            req.setEndModified(lastModifiedTime);
              
             req.setFields("tid,status");
             request.setRequest(req);
@@ -365,13 +356,15 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     	MCloudRequest inRequest;
     	List<Trade> list;
     	String orgId;
+    	Date lastModifiedTime;
         
 
-        public InvokeDownload(String token, MCloudRequest inRequest,List<Trade> list,String orgId) {
+        public InvokeDownload(String token, MCloudRequest inRequest,List<Trade> list,String orgId,Date lastModifiedTime) {
         	this.token = token;
         	this.inRequest = inRequest;
             this.list = list;
             this.orgId = orgId;
+            this.lastModifiedTime=lastModifiedTime;
            
         }
 
@@ -386,7 +379,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
             //Map<String,Object> result = new HashMap<String,Object>();
             if (tids.size() > 0) {
                 List<Trade> retHashMap = new ArrayList<Trade>();
-                return processItems(token,inRequest, list,retHashMap,orgId);
+                return processItems(token,inRequest, list,retHashMap,orgId,lastModifiedTime);
             }
 
             return null;
@@ -397,14 +390,14 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     /**
      * 保存更新交易订单详细数据
      */
-    private Map<String, Object> processItems(String token,MCloudRequest inRequest,List<Trade> insList,List<Trade> retHashMap,String orgId) {
+    private Map<String, Object> processItems(String token,MCloudRequest inRequest,List<Trade> insList,List<Trade> retHashMap,String orgId,Date lastModifiedTime) {
     	
         try {
         	Map<String, Object> returnval=new HashMap<String, Object>();
             List<String> list = new ArrayList<String>();
             for (int i = 0; i < insList.size(); i++) {
 
-            	
+            	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             	//取单据Tid
                 String tid = String.valueOf(insList.get(i).getTid());
                 
@@ -428,20 +421,20 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
         		
         		List<String> orderids = new ArrayList<String>();				
 				orderids.add(trade.getTid().toString());
-        		Logger.error("===query before lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+        		Logger.error("===query before Taobao datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
 				if(!RuntimeEnv.getInstance().isDevelopMode()) {
 					InvocationInfoProxy.getInstance().setUserDataSource("VM");
 				} else if(InvocationInfoProxy.getInstance().getUserDataSource() == null){
 					InvocationInfoProxy.getInstance().setUserDataSource("VM");
 				}
-				Logger.error("===query after lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+				Logger.error("===query after taobao datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
 				List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
 				
 				if(existOrder.size()<=0){
 					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(taobaoBillTransform.convertTaobaoBill(trade,orgId,url), 
 							taobaoBillTransform.convertTaobaoBillItem(trade,trade.getOrders()));
 				}else {
-					dbProcessForTaobaoStatusUpdate(trade,Long.toString(new Date().getTime()));
+					dbProcessForTaobaoStatusUpdate(trade,format.format(lastModifiedTime));
 				}
 
             }
