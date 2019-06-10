@@ -65,13 +65,13 @@ public class DownloadMethod {
 		String result = ""; 
 		
 		//if (totalInsert > 0)
-			result = "本次成功下载 " + totalInsert + " 条";
+			result = "鏈鎴愬姛涓嬭浇 " + totalInsert + " 鏉";
 
 		//if (totalUpdate > 0) {
 			//if (result.length() > 0)
-				result += "，更新 " + totalUpdate + " 条";
+				result += "锛屾洿鏂�" + totalUpdate + " 鏉";
 			//else
-			//	result += "本次成功更新 " + totalUpdate + " 条";
+			//	result += "鏈鎴愬姛鏇存柊 " + totalUpdate + " 鏉�;
 		//}
 		return result;
 	}
@@ -87,9 +87,9 @@ public class DownloadMethod {
 	 */
 	public <T> List<Future<T>> executeTaskList(List<Callable<T>> taskList) throws Exception {
 	
-        //invokeAll批量运行所有任务, submit提交单个任务
+        //invokeAll鎵归噺杩愯鎵�湁浠诲姟, submit鎻愪氦鍗曚釜浠诲姟
     	ExecutorService exec = Executors.newFixedThreadPool(10);
-    	// 结果列表:存放任务完成返回的值
+    	// 缁撴灉鍒楄〃:瀛樻斁浠诲姟瀹屾垚杩斿洖鐨勫�
         List<Future<T>> resultList = exec.invokeAll(taskList,20,TimeUnit.MINUTES);
         exec.shutdown();
         return resultList;
@@ -116,7 +116,7 @@ public class DownloadMethod {
 			JSONArray jsonArray = new JSONArray();
 			
 			if (resultList != null && resultList.size() > 0) {
-				/*从future中输出每个任务的返回值*/
+				/*浠巉uture涓緭鍑烘瘡涓换鍔＄殑杩斿洖鍊*/
 	            for (Future<Map<String, Object>> future : resultList) {
 	            	
 	            	
@@ -128,7 +128,7 @@ public class DownloadMethod {
 						System.out.println("future is Cancelled!");
 						continue;
 					}else if(future.isDone()){
-	            		//正常完成
+	            		//姝ｅ父瀹屾垚
 	            		System.out.println(("future is done!"));
 					}
 	            	Map<String, Object> retMap = future.get();

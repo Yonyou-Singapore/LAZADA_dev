@@ -65,7 +65,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 	private ILazadaService lazadaService;
 	
 	
-	public void execute(String[] platform, UFDate startdate, UFDate enddate)
+	public void execute(String[] platform,String[] orgs, UFDate startdate, UFDate enddate)
 			throws BusinessException {
 
 		String result = "";
@@ -87,13 +87,12 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 				String token = sysVO.getValue();
 				String orgId = sysVO.getInitcode();
 				
-				List<String> platformList = Arrays.asList(platform);
+				List<String> orgslist = Arrays.asList(orgs);
 	          
-				//判断是否需要dang
-			    if(!platformList.contains(orgId)){
+				//判断组织
+			    if(!orgslist.contains(orgId)){
 			    	for(String url: urlList){
 						result = procOrders(url,token,orgId,startdate,enddate);
-//						System.out.print(result);
 					}
 	            }
 			}

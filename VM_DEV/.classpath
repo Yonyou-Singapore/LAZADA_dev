@@ -12,12 +12,9 @@
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Framework_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Public_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Client_Library"/>
-	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Private_Library">
-		<accessrules>
-			<accessrule kind="accessible" pattern="nc/**"/>
-		</accessrules>
-	</classpathentry>
+	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Private_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Module_Lang_Library"/>
 	<classpathentry kind="con" path="nc.uap.mde.library.container/Generated_EJB"/>
+	<classpathentry kind="lib" path="D:/dev_env/NSHOME/modules/so/lib/uretail-common-1.0.2-2019.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
