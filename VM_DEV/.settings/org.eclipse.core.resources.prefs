@@ -1,0 +1,15 @@
+eclipse.preferences.version=1
+encoding//src/private/nc/bs/so/plugin/service/AbstractWorkPlugin.java=UTF-8
+encoding//src/private/nc/bs/so/plugin/service/LazadaUpdateOrderStatusService.java=UTF-8
+encoding//src/private/nc/bs/so/plugin/service/TaobaoUpdateOrderStatusService.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/lazada/util/DownloadMethod.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/lazada/util/LazadaBillTransform.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/lazada/util/TransferUtils.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/MCloudRequest.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/MD5Util.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/OrderSourceRequest.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/ServiceUtil.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/SignUtil.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/TaobaoBillTransform.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/TaobaoSafeUtils.java=UTF-8
+encoding//src/private/nc/impl/so/restapi/jsonservice/vo/taobao/util/TopSecretUtil.java=UTF-8
