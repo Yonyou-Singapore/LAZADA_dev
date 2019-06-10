@@ -57,11 +57,16 @@ public interface ILazadaService {
 	 */
 	public void downloadTaobaoOrderCenter() throws BusinessException;
 	
+	
 	/**
 	 * 下载选定的原单
 	 * @throws BusinessException 
+	 * String[] platform 平台
+	 * String[] orgs 公司
+	 * UFDate startdate create after
+	 * UFDate enddate create before
 	 */
-	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException;
+	public void downloadSelectOrderCenter(String[] platform,String[] orgs, UFDate startdate, UFDate enddate) throws BusinessException;
 	
 	/**
 	 * 更新lazada订单状态到readytoship

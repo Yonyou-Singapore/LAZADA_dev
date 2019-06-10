@@ -92,9 +92,9 @@ public class LazadaServiceImpl implements ILazadaService {
 	
 	
 	@Override
-	public void downloadSelectOrderCenter(String[] platform, UFDate startdate, UFDate enddate) throws BusinessException {
+	public void downloadSelectOrderCenter(String[] platform,String[] orgs, UFDate startdate, UFDate enddate) throws BusinessException {
 		LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
-		lazadaservice.execute(platform, startdate,enddate);
+		lazadaservice.execute(platform,orgs, startdate,enddate);
 	}
 	
 	
