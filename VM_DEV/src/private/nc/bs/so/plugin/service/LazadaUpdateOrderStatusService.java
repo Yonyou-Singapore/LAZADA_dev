@@ -129,7 +129,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 		
 		
 		List<String> timeList = new ArrayList<String>();
-		//鍙栧簱閲岄潰涓婃鏇存柊鐨勬渶鏅氭椂闂�
+		//取数据库中最新修改时间
 		timeList = queryLazadaOrderLastUpdateTime(orgId);
 		
 		if(!CollectionUtils.isEmpty(timeList)){

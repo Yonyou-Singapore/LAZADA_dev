@@ -66,7 +66,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
     
     
     
-    public void execute(String[] platform,String[] orgs, UFDate startdate, UFDate enddate)
+    public void execute(String[] orgs, UFDate startdate, UFDate enddate)
 			throws BusinessException{
 
 		String result = "";
@@ -148,11 +148,6 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
         }
         return retStr;
 	}
-	
-	
-	
-	
-	
 
     /**
      * 处理按拍下时间进行同步的订单
@@ -173,9 +168,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 		String isoenddate="" ;
 		String iosstartDate="" ;
 		try {
-			sysvostart = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA01");
-		
-			sysvoend = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA02");//结束时间
+			
 			DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");   
 			
 			Date startdate = format1.parse(sysvostart.getValue());

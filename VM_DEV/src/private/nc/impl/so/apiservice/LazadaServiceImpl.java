@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.pub.taskcenter.BgWorkingContext;
@@ -11,6 +13,7 @@ import nc.bs.so.plugin.service.LazadaGetOrderService;
 import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
 import nc.bs.so.plugin.service.LazadaReadyToShopService;
 import nc.bs.so.plugin.service.TaobaoGetOrderService;
+import nc.bs.so.plugin.service.TaobaoGetSelectOrderService;
 import nc.impl.pubapp.pattern.data.bill.BillOperator;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
@@ -91,10 +94,36 @@ public class LazadaServiceImpl implements ILazadaService {
 	}
 	
 	
+	/**
+	 * 手动拉单
+	 * @param String[] platforms 平台列表 
+	 * @param String[] orgs 集团列表 
+	 * @param UFDate 日期区间开始 
+	 * @param UFDate 日期区间结束
+	 * 
+	 */
+	
 	@Override
-	public void downloadSelectOrderCenter(String[] platform,String[] orgs, UFDate startdate, UFDate enddate) throws BusinessException {
-		LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
-		lazadaservice.execute(platform,orgs, startdate,enddate);
+	public void downloadSelectOrderCenter(String[] platforms,String[] orgs, UFDate startdate, UFDate enddate) throws BusinessException {
+		List<String> platformList = Arrays.asList(platforms);
+		
+		if(platformList.size()>0){
+			for(String platformName:platformList){
+				switch(platformName){
+				case "lazada":
+					LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
+					lazadaservice.execute(orgs, startdate,enddate);
+					break;
+				case "Tmall":
+					TaobaoGetSelectOrderService taobaoservice = new TaobaoGetSelectOrderService();
+					taobaoservice.execute(orgs, startdate, enddate);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
 	}
 	
 	

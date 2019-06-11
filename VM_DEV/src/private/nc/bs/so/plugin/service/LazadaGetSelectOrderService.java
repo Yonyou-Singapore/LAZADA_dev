@@ -2,6 +2,7 @@ package nc.bs.so.plugin.service;
 
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +66,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 	private ILazadaService lazadaService;
 	
 	
-	public void execute(String[] platform,String[] orgs, UFDate startdate, UFDate enddate)
+	public void execute(String[] orgs, UFDate startdate, UFDate enddate)
 			throws BusinessException {
 
 		String result = "";
@@ -82,21 +83,41 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			
 			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//开始时间
 			
-			for(SysInitVO sysVO: sysTokenlist){
-				
-				String token = sysVO.getValue();
-				String orgId = sysVO.getInitcode();
-				
-				List<String> orgslist = Arrays.asList(orgs);
-	          
-				//判断组织
-			    if(!orgslist.contains(orgId)){
-			    	for(String url: urlList){
-						result = procOrders(url,token,orgId,startdate,enddate);
+			
+			List<String> timeList = new ArrayList<String>();
+			//取数据库中最新修改时间
+			timeList = queryLazadaOrderLastUpdateTime("LAZADA");
+			
+			if(!CollectionUtils.isEmpty(timeList)){
+								
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date updatedDay = new Date();
+					
+					if(timeList.get(0)!=null && timeList.get(0).length()>0){
+						try {
+							//updatedDay = format.parse("2019-04-01 00:00:00");
+							updatedDay = format.parse(timeList.get(0));
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-	            }
+					
+					for(SysInitVO sysVO: sysTokenlist){
+						
+						String token = sysVO.getValue();
+						String orgId = sysVO.getInitcode();
+						
+						List<String> orgslist = Arrays.asList(orgs);
+			          
+						//判断组织
+					    if(!orgslist.contains(orgId)){
+					    	for(String url: urlList){
+								result = procOrders(url,token,orgId,startdate,enddate,updatedDay);
+							}
+			            }
+					}
 			}
-
 
 		} catch (Exception e) {
 			ExceptionUtils.wrappBusinessException(e.getMessage());
@@ -139,7 +160,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 	 * @param service
 	 * @return
 	 */
-	private String procOrders(String url,String token,String orgId,UFDate uFstartdate, UFDate uFenddate) {
+	private String procOrders(String url,String token,String orgId,UFDate uFstartdate, UFDate uFenddate,Date updatedDay) {
 
 		LazadaGetOrderListsRequest req = new LazadaGetOrderListsRequest();
 		// long page = 0L;
@@ -158,9 +179,6 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			
-			SysInitVO sysvostart = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA01");//开始时间
-			SysInitVO sysvoend = NCLocator.getInstance().lookup(ISysInitQry.class).queryByParaCode(pk_group, "SOLAZADA02");//结束时间
-			
 			
 			DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");   
 			
@@ -169,6 +187,8 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			
 			String isoenddate = LazadaDateUtils.normalToIso8601((Long.toString(enddate.getTime())));
 			String iosstartDate = LazadaDateUtils.normalToIso8601((Long.toString(startdate.getTime())));
+			String iosupdateDate = LazadaDateUtils.normalToIso8601((Long.toString(updatedDay.getTime()))); 
+			
 			 
 			 
 			req.setStatus("");
@@ -177,12 +197,10 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			do {
 				page++;
 
-				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,null);
+				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,iosupdateDate);
 
 				Logger.info("调用数据通获取原单列表接口【getOrders】返回数据" + retStr);
-				//保存请求数据
-				this.saveResponseStr(url,token ,iosstartDate, isoenddate,true,null);
-				// OrderListResult orderList = processResStr(retStr);
+				
 				LazadaGetOrderListDataResponse lazadaGetOrderListDataResponse = new Gson()
 						.fromJson(retStr, LazadaGetOrderListDataResponse.class);
 				LazadaGetOrderListResponse lazadaGetOrderListResponse = null;
@@ -190,8 +208,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 				if (StringUtils.isNotEmpty(retStr)) {
 					if (retStr.length() != 0) {
 						try {
-							lazadaGetOrderListResponse = lazadaGetOrderListDataResponse
-									.getData();
+							lazadaGetOrderListResponse = lazadaGetOrderListDataResponse.getData();
 						} catch (Exception e) {
 							Logger.error("调用数据通获取原单列表接口【getOrders】返回数据转换json异常",
 							e);
@@ -203,8 +220,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 							pageMax = (totalNum % pageSize == 0 ? totalNum
 									/ pageSize : totalNum / pageSize + 1);
 							// 订单列表
-							List<LazadaGetOrderDetailResponse> items = lazadaGetOrderListResponse
-									.getOrders();
+							List<LazadaGetOrderDetailResponse> items = lazadaGetOrderListResponse.getOrders();
 
 							if (items == null || items.size() == 0)
 								break;
@@ -226,20 +242,6 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 		return result;
 	}
 	
-	/**
-	 * 返回数据先存储
-	 * @param url
-	 * @param token
-	 * @param iosstartDate
-	 * @param isoenddate
-	 * @param b
-	 * @param object
-	 */
-	private void saveResponseStr(String url, String token, String iosstartDate,
-			String isoenddate, boolean b, Object object) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private class InvokeDownload implements Callable<Map<String, Object>> {
 		
@@ -261,72 +263,63 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 
 			Map<String, Object> newmap = new HashMap<String, Object>();
 
-			//List<String> list = new ArrayList<String>();
+			//查询数据库中是否已存在原单
+
+			List<String> orderids = new ArrayList<String>();				
+			
+			for(LazadaGetOrderDetailResponse orderitem:itemsList ){
+				orderids.add(orderitem.getOrder_id().toString());
+			}
+			
+			Logger.error("===query before lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+			if(!RuntimeEnv.getInstance().isDevelopMode()) {
+				InvocationInfoProxy.getInstance().setUserDataSource("VM");
+			} else if(InvocationInfoProxy.getInstance().getUserDataSource() == null){
+				InvocationInfoProxy.getInstance().setUserDataSource("VM");
+			}
+			Logger.error("===query after lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+			List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
 			
 			List<LazadaGetOrderDetailResponse> lazadaGetOrderDetaillist = new ArrayList<LazadaGetOrderDetailResponse>();
 
 			for (LazadaGetOrderDetailResponse item : itemsList) {		
 
-				String itemsByOrderId = lazadaClientService.getOrderItems(url,token,String.valueOf(item.getOrder_id())) ;
-				List<LazadaProductsInfo> lazadaProductsInfoResponse = null;
-				if (StringUtils.isNotEmpty(itemsByOrderId)) {
-					if (itemsByOrderId.length() != 0) {
-						try {
-							LazadaProductsInfoDataResponse lazadaProductsInfoDataResponse = new Gson()
-									.fromJson(
-											itemsByOrderId,
-											LazadaProductsInfoDataResponse.class);
-							lazadaProductsInfoResponse = lazadaProductsInfoDataResponse
-									.getData();
-						} catch (Exception e) {
-							Logger.error(
-									"获取原单"+item.getOrder_id()+"对应的商品行接口【getOrderItems】返回数据转换json异常",
-									e);
+				if(existOrder.contains(item.getOrder_id().toString())){
+					String itemsByOrderId = lazadaClientService.getOrderItems(url,token,String.valueOf(item.getOrder_id())) ;
+					List<LazadaProductsInfo> lazadaProductsInfoResponse = null;
+					if (StringUtils.isNotEmpty(itemsByOrderId)) {
+						if (itemsByOrderId.length() != 0) {
+							try {
+								LazadaProductsInfoDataResponse lazadaProductsInfoDataResponse = new Gson()
+										.fromJson(
+												itemsByOrderId,
+												LazadaProductsInfoDataResponse.class);
+								lazadaProductsInfoResponse = lazadaProductsInfoDataResponse
+										.getData();
+							} catch (Exception e) {
+								Logger.error(
+										"获取原单"+item.getOrder_id()+"对应的商品行接口【getOrderItems】返回数据转换json异常",
+										e);
+							}
 						}
 					}
-				}
-				// 每个订单设置商品行
-				if (CollectionUtils.isEmpty(lazadaProductsInfoResponse)) {
-					Logger.error(
-							"获取原单"+item.getOrder_id()+"【getOrderItems】返回数据为空");
-					 continue;  
-				}
-				item.setProducts(lazadaProductsInfoResponse);
-				
-				
-				List<String> orderids = new ArrayList<String>();				
-				orderids.add(item.getOrder_id().toString());
-//				List<String> existOrder = queryExistLazadaOrder(orderids);
-				Logger.error("===query before lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
-				if(!RuntimeEnv.getInstance().isDevelopMode()) {
-					InvocationInfoProxy.getInstance().setUserDataSource("VM");
-				} else if(InvocationInfoProxy.getInstance().getUserDataSource() == null){
-					InvocationInfoProxy.getInstance().setUserDataSource("VM");
-				}
-				Logger.error("===query after lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
-				List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
-				
-				if(existOrder.size()<=0){
-					
-					
-//					dbProcessForInsert(lazadaBillTransform.convertLazadaBill(item,orgId,url));
-//				
-//					dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
-					//交给ejb进行事务管控 add by weiningc 20190428
+					// 每个订单设置商品行
+					if (CollectionUtils.isEmpty(lazadaProductsInfoResponse)) {
+						Logger.error(
+								"获取原单"+item.getOrder_id()+"【getOrderItems】返回数据为空");
+						 continue;  
+					}
+					item.setProducts(lazadaProductsInfoResponse);
+						
 					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item,orgId,url,lazadaProductsInfoResponse), 
 							lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
-					
-					//dbProcessForInsert(lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));
-					//lazadaService.insertlazadaresponse(lazadaBillTransform.convertLazadaBill(item), lazadaBillTransform.convertLazadaBillItem(lazadaProductsInfoResponse));				
 					lazadaGetOrderDetaillist.add(item);
-
-				}	
-				Logger.info("原单下载，调用lazada接口 检索单个订单信息 返回数据" +itemsByOrderId);
-				 //list.add(itemsByOrderId);
+					
+					Logger.info("原单下载，调用lazada接口 检索单个订单信息 返回数据" +itemsByOrderId);
+					
+				}
 			}
 
-//			System.out.print(lazadaGetOrderDetaillist);
-		
 			JSONArray toJSON = lazadaJsonUtil.convertJSON(lazadaGetOrderDetaillist);		
 			newmap.put("result", toJSON);
 			
