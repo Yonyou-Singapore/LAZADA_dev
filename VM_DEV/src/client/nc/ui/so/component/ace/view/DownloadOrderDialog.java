@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import nc.bs.framework.common.InvocationInfoProxy;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.org.ref.SaleorgDefaultRefModel;
 import nc.ui.pub.beans.MessageDialog;
@@ -120,6 +121,14 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 							"ordercentermenu_009")/* @res "×éÖ¯" */);
 			pk_orgpanel.setSize(280, 22);
 			SaleorgDefaultRefModel orgmodel = new SaleorgDefaultRefModel();
+			String userId = InvocationInfoProxy.getInstance().getUserId();
+			StringBuffer sb = new StringBuffer();
+			sb.append(" pk_salesorg in (select urg.pk_org from (select distinct ur.cuserid, subjectorg.pk_org");
+            sb.append(" from sm_user_role ur, sm_subject_org subjectorg");
+            sb.append(" where ur.pk_role = subjectorg.subjectid) urg where 1 = 1");
+            sb.append(" and urg.cuserid in ('" + userId + "'))");
+			
+			orgmodel.setWherePart(sb.toString());
 			pk_orgpanel.setRefModel(orgmodel);
 			pk_orgpanel.setMultiSelectedEnabled(true);
 		}
