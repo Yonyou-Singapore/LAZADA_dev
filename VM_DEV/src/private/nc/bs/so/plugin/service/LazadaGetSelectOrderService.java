@@ -111,7 +111,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 						List<String> orgslist = Arrays.asList(orgs);
 			          
 						//ÅÐ¶Ï×éÖ¯
-					    if(!orgslist.contains(orgId)){
+					    if(orgslist.contains(orgId)){
 					    	for(String url: urlList){
 								result = procOrders(url,token,orgId,startdate,enddate,updatedDay);
 							}
@@ -284,7 +284,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 
 			for (LazadaGetOrderDetailResponse item : itemsList) {		
 
-				if(existOrder.contains(item.getOrder_id().toString())){
+				if(!existOrder.contains(item.getOrder_id().toString())){
 					String itemsByOrderId = lazadaClientService.getOrderItems(url,token,String.valueOf(item.getOrder_id())) ;
 					List<LazadaProductsInfo> lazadaProductsInfoResponse = null;
 					if (StringUtils.isNotEmpty(itemsByOrderId)) {

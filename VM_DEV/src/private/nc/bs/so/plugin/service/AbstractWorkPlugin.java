@@ -168,7 +168,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	public List<String> queryTaobaoOrderLastUpdateTime(String orgId) {
 		List<String> executeQuery = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where orgid = 'TAOBAO'");
+		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where platform = 'TAOBAO'");
 		BaseDAO dao = new BaseDAO();
 		try {
 			executeQuery = (List<String>) dao.executeQuery(sql.toString(), new ColumnListProcessor());
