@@ -224,7 +224,8 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 
 							if (items == null || items.size() == 0)
 								break;
-							taskList.add(new InvokeDownload(url,token,orgId,items));
+//							taskList.add(new InvokeDownload(url,token,orgId,items));
+							new DownloadOrderService(url, token, orgId, items).call();
 						}
 					} else {
 						return "取到的数据为空!";
@@ -233,7 +234,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 
 			} while (page < pageMax);
 
-			result = downloadmethod.executeDownloadTask(taskList);
+//			result = downloadmethod.executeDownloadTask(taskList);
 
 		} catch (Exception e) {
 

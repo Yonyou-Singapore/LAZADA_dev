@@ -99,11 +99,11 @@ public String transtypepk;
 /**
 *voucher
 */
-public String voucher;
+public UFDouble voucher;
 /**
 *shipping_fee
 */
-public String shipping_fee;
+public UFDouble shipping_fee;
 /**
 *customer_last_name
 */
@@ -219,7 +219,7 @@ public String shipping_phone;
 /**
 *price
 */
-public String price;
+public UFDouble price;
 /**
 *billing_address1
 */
@@ -275,7 +275,7 @@ public String order_id;
 /**
 *gift_option
 */
-public Boolean gift_option;
+public UFBoolean gift_option;
 /**
 *updated_at
 */
@@ -296,6 +296,11 @@ public String pk_currtype;
 *时间戳
 */
 public UFDateTime ts;
+
+/**
+ * 电商平台
+ */
+public String platform;
     
     
 /**
@@ -645,7 +650,7 @@ this.transtypepk=transtypepk;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getVoucher() {
+public UFDouble getVoucher() {
 return this.voucher;
 } 
 
@@ -654,7 +659,7 @@ return this.voucher;
 * 创建日期:2019-6-6
 * @param newVoucher nc.vo.pub.lang.UFDouble
 */
-public void setVoucher ( String voucher) {
+public void setVoucher ( UFDouble voucher) {
 this.voucher=voucher;
 } 
  
@@ -663,7 +668,7 @@ this.voucher=voucher;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getShipping_fee() {
+public UFDouble getShipping_fee() {
 return this.shipping_fee;
 } 
 
@@ -672,7 +677,7 @@ return this.shipping_fee;
 * 创建日期:2019-6-6
 * @param newShipping_fee nc.vo.pub.lang.UFDouble
 */
-public void setShipping_fee ( String shipping_fee) {
+public void setShipping_fee ( UFDouble shipping_fee) {
 this.shipping_fee=shipping_fee;
 } 
  
@@ -1185,7 +1190,7 @@ this.shipping_phone=shipping_phone;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getPrice() {
+public UFDouble getPrice() {
 return this.price;
 } 
 
@@ -1194,7 +1199,7 @@ return this.price;
 * 创建日期:2019-6-6
 * @param newPrice nc.vo.pub.lang.UFDouble
 */
-public void setPrice ( String price) {
+public void setPrice ( UFDouble price) {
 this.price=price;
 } 
  
@@ -1437,7 +1442,7 @@ this.order_id=order_id;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFBoolean
 */
-public Boolean getGift_option() {
+public UFBoolean getGift_option() {
 return this.gift_option;
 } 
 
@@ -1446,7 +1451,7 @@ return this.gift_option;
 * 创建日期:2019-6-6
 * @param newGift_option nc.vo.pub.lang.UFBoolean
 */
-public void setGift_option ( Boolean gift_option) {
+public void setGift_option ( UFBoolean gift_option) {
 this.gift_option=gift_option;
 } 
  
@@ -1527,9 +1532,18 @@ this.pk_currtype=pk_currtype;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDateTime
 */
+
 public UFDateTime getTs() {
 return this.ts;
 }
+public String getPlatform() {
+	return platform;
+}
+
+public void setPlatform(String platform) {
+	this.platform = platform;
+}
+
 /**
 * 属性生成时间戳的Setter方法.属性名：时间戳
 * 创建日期:2019-6-6

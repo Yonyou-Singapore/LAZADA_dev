@@ -43,7 +43,7 @@ public String pk_org_v;
 /**
 *paid_price
 */
-public String paid_price;
+public UFDouble paid_price;
 /**
 *product_main_image
 */
@@ -51,7 +51,7 @@ public String product_main_image;
 /**
 *tax_amount
 */
-public String tax_amount;
+public UFDouble tax_amount;
 /**
 *voucher_platform
 */
@@ -71,7 +71,7 @@ public String purchase_order_id;
 /**
 *voucher_seller
 */
-public String voucher_seller;
+public UFDouble voucher_seller;
 /**
 *shipping_type
 */
@@ -135,7 +135,7 @@ public String is_digital;
 /**
 *item_price
 */
-public String item_price;
+public UFDouble item_price;
 /**
 *shipping_service_cost
 */
@@ -175,7 +175,7 @@ public String shipment_provider;
 /**
 *voucher_amount
 */
-public String voucher_amount;
+public UFDouble voucher_amount;
 /**
 *digital_delivery_info
 */
@@ -195,7 +195,7 @@ public String orderstatus;
 /**
 *attrDisplayName14
 */
-public String qty;
+public UFDouble qty;
 /**
 *电商订单号
 */
@@ -305,7 +305,7 @@ this.pk_org_v=pk_org_v;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getPaid_price() {
+public UFDouble getPaid_price() {
 return this.paid_price;
 } 
 
@@ -314,7 +314,7 @@ return this.paid_price;
 * 创建日期:2019-6-6
 * @param newPaid_price nc.vo.pub.lang.UFDouble
 */
-public void setPaid_price ( String paid_price) {
+public void setPaid_price ( UFDouble paid_price) {
 this.paid_price=paid_price;
 } 
  
@@ -341,7 +341,7 @@ this.product_main_image=product_main_image;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getTax_amount() {
+public UFDouble getTax_amount() {
 return this.tax_amount;
 } 
 
@@ -350,7 +350,7 @@ return this.tax_amount;
 * 创建日期:2019-6-6
 * @param newTax_amount nc.vo.pub.lang.UFDouble
 */
-public void setTax_amount ( String tax_amount) {
+public void setTax_amount ( UFDouble tax_amount) {
 this.tax_amount=tax_amount;
 } 
  
@@ -431,7 +431,7 @@ this.purchase_order_id=purchase_order_id;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getVoucher_seller() {
+public UFDouble getVoucher_seller() {
 return this.voucher_seller;
 } 
 
@@ -440,7 +440,7 @@ return this.voucher_seller;
 * 创建日期:2019-6-6
 * @param newVoucher_seller nc.vo.pub.lang.UFDouble
 */
-public void setVoucher_seller ( String voucher_seller) {
+public void setVoucher_seller ( UFDouble voucher_seller) {
 this.voucher_seller=voucher_seller;
 } 
  
@@ -719,7 +719,7 @@ this.is_digital=is_digital;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getItem_price() {
+public UFDouble getItem_price() {
 return this.item_price;
 } 
 
@@ -728,7 +728,7 @@ return this.item_price;
 * 创建日期:2019-6-6
 * @param newItem_price nc.vo.pub.lang.UFDouble
 */
-public void setItem_price ( String item_price) {
+public void setItem_price ( UFDouble item_price) {
 this.item_price=item_price;
 } 
  
@@ -899,7 +899,7 @@ this.shipment_provider=shipment_provider;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getVoucher_amount() {
+public UFDouble getVoucher_amount() {
 return this.voucher_amount;
 } 
 
@@ -908,7 +908,7 @@ return this.voucher_amount;
 * 创建日期:2019-6-6
 * @param newVoucher_amount nc.vo.pub.lang.UFDouble
 */
-public void setVoucher_amount ( String voucher_amount) {
+public void setVoucher_amount ( UFDouble voucher_amount) {
 this.voucher_amount=voucher_amount;
 } 
  
@@ -989,7 +989,7 @@ this.orderstatus=orderstatus;
 *  创建日期:2019-6-6
 * @return nc.vo.pub.lang.UFDouble
 */
-public String getQty() {
+public UFDouble getQty() {
 return this.qty;
 } 
 
@@ -998,7 +998,7 @@ return this.qty;
 * 创建日期:2019-6-6
 * @param newQty nc.vo.pub.lang.UFDouble
 */
-public void setQty ( String qty) {
+public void setQty ( UFDouble qty) {
 this.qty=qty;
 } 
  
