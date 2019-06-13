@@ -50,6 +50,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradeFullinfoGetRequest;
 
+import com.taobao.api.request.TradesSoldGetRequest;
 import com.taobao.api.request.TradesSoldIncrementGetRequest;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
@@ -90,14 +91,14 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 			for(SysInitVO sysVO: sysTokenlist){
 				
 				String token = sysVO.getValue();
-				String orgId = sysVO.getInitcode();
+				String orgId = orgs[0];
 			
 				List<String> orgList = Arrays.asList(orgs);
 				
 				//判断组织
-			    if(orgList.contains(orgId)){
+//			    if(orgList.contains(orgId)){
 			    	getUpdatedRange(token,orgId,startdate, enddate);	
-	            }
+//	            }
 			}
 
 		} catch (Exception e) {
@@ -146,7 +147,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 		//取库中最大的更新时间
 		timelist = queryTaobaoOrderLastUpdateTime(orgId);
 		
-		if(!CollectionUtils.isEmpty(timelist)){
+		if(!CollectionUtils.isEmpty(timelist) && timelist.get(0) != null){
 							
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date updatedDayStart = new Date();
@@ -240,7 +241,10 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 
                                 if (null != list) {
                                     MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
-                                    taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
+//                                    taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
+                                    //modify by weininc 20190612 start
+                                    new TmallDownloadOrderService(token, inRequest, list, orgId, lastModifiedTime).call();
+                                    //end
                                 }
                                 if (StringUtils.isNotBlank(response.getErrorCode())) {
 //        							//刷新token
@@ -300,17 +304,18 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
     private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date modifyStart,Date modifyEnd,Date lastModifiedTime) {
 
         try {
-        	TradesSoldIncrementGetRequest req = new TradesSoldIncrementGetRequest();
         	
-        	 if (modifyStart != null) {
-                 req.setStartModified(modifyStart);
-             }   
-        	 
-            req.setEndModified(modifyEnd);
+        	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        	
+        	
+        	
              
-            req.setFields("tid,status");
-            request.setRequest(req);
-            request.setMethod("getTaobaoTradesSoldIncrement");
+            OrderSourceRequest orderSourceRequest = (OrderSourceRequest) request.getRequest();
+            orderSourceRequest.setFields("tid,num,status,modified");
+            orderSourceRequest.setEndCreated(format.format(modifyEnd));
+            orderSourceRequest.setStartCreated(format.format(modifyStart));
+            request.setRequest(orderSourceRequest);
+            request.setMethod("getTradesSold");
             request.setSession(token);
             request.setAccess("3");
           

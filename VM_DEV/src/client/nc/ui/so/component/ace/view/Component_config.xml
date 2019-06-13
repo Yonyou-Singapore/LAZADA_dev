@@ -82,7 +82,7 @@
 	</bean>
 
 	<!--====== 视图元素：[PUBAPP表单控件(ShowUpableBillForm)实例对象] ==============-->
-	<bean id="billForm" class="nc.ui.pubapp.uif2app.view.ShowUpableBillForm" init-method="initUI">
+	<bean id="billForm" class="nc.ui.so.component.ace.view.OCBillform" init-method="initUI">
 		<property name="model"><ref bean="bmModel" /></property>
 		<property name="nodekey" value="bt" />
 		<!-- 表体行操作按钮注册，这只是一组默认设置，开发人员需要自己在此添加其他需要的表体行操作按钮 -->

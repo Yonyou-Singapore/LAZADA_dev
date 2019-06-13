@@ -209,7 +209,7 @@ public String pk_ordercenter;
 */
 public UFDateTime ts;
     
-    
+public String order_item_id;
 /**
 * 属性 pk_ordercenter_b的Getter方法.属性名：销售组织表体主键
 *  创建日期:2019-6-6
@@ -1051,9 +1051,19 @@ return this.ts;
 */
 public void setTs(UFDateTime ts){
 this.ts=ts;
+
+
 } 
      
-    @Override
+    public String getOrder_item_id() {
+	return order_item_id;
+}
+
+public void setOrder_item_id(String order_item_id) {
+	this.order_item_id = order_item_id;
+}
+
+	@Override
     public IVOMeta getMetaData() {
     return VOMetaFactory.getInstance().getVOMeta("so.so_ordercenter_b");
     }

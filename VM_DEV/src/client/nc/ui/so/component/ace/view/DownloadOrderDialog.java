@@ -131,10 +131,9 @@ public class DownloadOrderDialog extends JOKCancelDialog {
             sb.append(" from sm_user_role ur, sm_subject_org subjectorg");
             sb.append(" where ur.pk_role = subjectorg.subjectid) urg where 1 = 1");
             sb.append(" and urg.cuserid in ('" + userId + "'))");
-			
 			orgmodel.setWherePart(sb.toString());
 			pk_orgpanel.setRefModel(orgmodel);
-			pk_orgpanel.setMultiSelectedEnabled(true);
+			pk_orgpanel.setMultiSelectedEnabled(false);
 		}
 		return pk_orgpanel;
 	}
