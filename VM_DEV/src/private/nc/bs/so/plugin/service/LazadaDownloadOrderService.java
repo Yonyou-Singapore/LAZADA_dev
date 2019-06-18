@@ -89,10 +89,10 @@ public class LazadaDownloadOrderService {
 
 		Map<String, Object> newmap = new HashMap<String, Object>();
 		
-		//æ‰¹é‡ä¿å­˜
+		//ÅúÁ¿±£´æ
 		List<AggSo_ordercenter> aggs = new ArrayList<AggSo_ordercenter>();
 		
-		//æŸ¥è¯¢æ•°æ®åº“ä¸­æ˜¯å¦å·²å­˜åœ¨åŸå•
+		//²éÑ¯Êı¾İ¿âÖĞÊÇ·ñÒÑ´æÔÚÔ­µ¥
 
 		List<String> orderids = new ArrayList<String>();				
 		
@@ -127,15 +127,15 @@ public class LazadaDownloadOrderService {
 									.getData();
 						} catch (Exception e) {
 							Logger.error(
-									"è·å–åŸå•"+item.getOrder_id()+"å¯¹åº”çš„å•†å“è¡Œæ¥å£ã€getOrderItemsã€‘è¿”å›æ•°æ®è½¬æ¢jsonå¼‚å¸¸",
+									"»ñÈ¡Ô­µ¥"+item.getOrder_id()+"¶ÔÓ¦µÄÉÌÆ·ĞĞ½Ó¿Ú¡¾getOrderItems¡¿·µ»ØÊı¾İ×ª»»jsonÒì³£",
 									e);
 						}
 					}
 				}
-				// æ¯ä¸ªè®¢å•è®¾ç½®å•†å“è¡Œ
+				// Ã¿¸ö¶©µ¥ÉèÖÃÉÌÆ·ĞĞ
 				if (CollectionUtils.isEmpty(lazadaProductsInfoResponse)) {
 					Logger.error(
-							"è·å–åŸå•"+item.getOrder_id()+"ã€getOrderItemsã€‘è¿”å›æ•°æ®ä¸ºç©º");
+							"»ñÈ¡Ô­µ¥"+item.getOrder_id()+"¡¾getOrderItems¡¿·µ»ØÊı¾İÎª¿Õ");
 					 continue;  
 				}
 				item.setProducts(lazadaProductsInfoResponse);
@@ -146,7 +146,7 @@ public class LazadaDownloadOrderService {
 				aggs.add(agg);
 				lazadaGetOrderDetaillist.add(item);
 				
-				Logger.info("åŸå•ä¸‹è½½ï¼Œè°ƒç”¨lazadaæ¥å£ æ£€ç´¢å•ä¸ªè®¢å•ä¿¡æ¯ è¿”å›æ•°æ®" +itemsByOrderId);
+				Logger.info("Ô­µ¥ÏÂÔØ£¬µ÷ÓÃlazada½Ó¿Ú ¼ìË÷µ¥¸ö¶©µ¥ĞÅÏ¢ ·µ»ØÊı¾İ" +itemsByOrderId);
 				
 			}
 		}
@@ -254,7 +254,7 @@ public class LazadaDownloadOrderService {
 			created_at = new UFDate(format.parse(order.getCreated_at()));
 			updated_at = new UFDate(format.parse(order.getUpdated_at()));
 		} catch (ParseException e) {
-			ExceptionUtils.wrappBusinessException("è§£ææ—¥æœŸé”™è¯¯");
+			ExceptionUtils.wrappBusinessException("½âÎöÈÕÆÚ´íÎó");
 		}
 	
 		So_ordercenter billvo = new So_ordercenter();
@@ -329,7 +329,7 @@ public class LazadaDownloadOrderService {
 		billvo.setPk_group(AppContext.getInstance().getPkGroup());
 		billvo.setRequesturl(url);
 		billvo.setStatus(VOStatus.NEW);
-		//å•æ®æ—¥æœŸ
+		//µ¥¾İÈÕÆÚ
 		billvo.setBilldate(new UFDate(order.getCreated_at()));
 		billvo.setBilltype(COBILLTYPE);
 		billvo.setTranstype(COBILLTYPE);

@@ -60,7 +60,7 @@ public class TmallDownloadOrderService {
 	String orgId;
 	Date lastModifiedTime;
 	private ServiceUtil serviceUtil = new ServiceUtil();
-	//æ•°æ®é€šè¯·æ±‚åœ°å€
+	//Êı¾İÍ¨ÇëÇóµØÖ·
 	private static final String sjturl = "http://sjt.yonyoucloud.com/servlet/BaseHttpServlet";
 
 	public TmallDownloadOrderService(String token, MCloudRequest inRequest,
@@ -115,7 +115,7 @@ public class TmallDownloadOrderService {
     }
 
 	/**
-     * ä¿å­˜æ›´æ–°äº¤æ˜“è®¢å•è¯¦ç»†æ•°æ®
+     * ±£´æ¸üĞÂ½»Ò×¶©µ¥ÏêÏ¸Êı¾İ
      */
     private Map<String, Object> processItems(String token,MCloudRequest inRequest,List<Trade> insList,List<Trade> retHashMap,String orgId,Date lastModifiedTime) {
     	
@@ -139,17 +139,17 @@ public class TmallDownloadOrderService {
 
         	Map<String, Object> returnval=new HashMap<String, Object>();
             List<String> list = new ArrayList<String>();
-            //æ‰¹é‡ä¿å­˜
+            //ÅúÁ¿±£´æ
     		List<AggSo_ordercenter> aggs = new ArrayList<AggSo_ordercenter>();
             for (int i = 0; i < insList.size(); i++) {
             	
-            	//å–å•æ®Tid
+            	//È¡µ¥¾İTid
                 String tid = String.valueOf(insList.get(i).getTid());
             	if(!existOrder.contains(tid)){
             		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 	
                     String retStr1 = getTopFullinfo(token,inRequest, tid);
-                    Logger.info("è°ƒç”¨æ·˜å®æ¥å£ taobao.trade.fullinfo.get " + retStr1);
+                    Logger.info("µ÷ÓÃÌÔ±¦½Ó¿Ú taobao.trade.fullinfo.get " + retStr1);
             
                     
                 	TradeFullinfoGetResponse response = (TradeFullinfoGetResponse) trans2Obj(retStr1, TradeFullinfoGetResponse.class);
@@ -248,7 +248,7 @@ public class TmallDownloadOrderService {
 			//billitem.setPackage_id(product.getPackage_id());
 			billitem.setShipping_type(order.getShippingType());
 			
-			//äº¤æ˜“æ ‡é¢˜ï¼Œä»¥åº—é“ºåä½œä¸ºæ­¤æ ‡é¢˜çš„å€¼ã€‚æ³¨:taobao.trades.getæ¥å£è¿”å›çš„Tradeä¸­çš„titleæ˜¯å•†å“åç§°
+			//½»Ò×±êÌâ£¬ÒÔµêÆÌÃû×÷Îª´Ë±êÌâµÄÖµ¡£×¢:taobao.trades.get½Ó¿Ú·µ»ØµÄTradeÖĞµÄtitleÊÇÉÌÆ·Ãû³Æ
 			billitem.setShop_id(trade.getTitle());
 			
 			if(order.getNumIid()!=null){
@@ -267,7 +267,7 @@ public class TmallDownloadOrderService {
 			billitem.setReturn_status(order.getRefundStatus());
 			//billitem.setProduct_detail_url(product.getProduct_detail_url());
 			billitem.setProduct_main_image(order.getPicPath());
-			//éä¼´å™º æ¦›æ¨¿î…»æ¶“ï¿½ add by weiningc 
+			//ÊıÁ¿ add by weiningc 
 			billitem.setQty(new UFDouble(order.getNum()));
 			billitem.setStatus(VOStatus.NEW);
 			billItemList.add(billitem);
@@ -369,10 +369,9 @@ public class TmallDownloadOrderService {
 		
 		billvo.setUpdated_at(updated_at);
 		
-		//ç’å‰§ç–†éˆî„î‚¼é‡å­˜æŸŠéƒå •æ£¿
 		billvo.setLastupdatetime(new UFDate());
 		
-		//å•æ®æ—¥æœŸ
+		//µ¥¾İÈÕÆÚ
 		billvo.setPk_org(this.queryOrgPK(orgId));
 		billvo.setPk_org_v(this.queryOrgPK(orgId));
 		billvo.setPk_group(AppContext.getInstance().getPkGroup());
@@ -388,7 +387,7 @@ public class TmallDownloadOrderService {
 		return billvo;
 	}
 
-	//å–è®¢å•è¯¦ç»†ä¿¡æ¯
+	//È¡¶©µ¥ÏêÏ¸ĞÅÏ¢
     private String getTopFullinfo(String token,MCloudRequest request, String tid) {
         TradeFullinfoGetRequest req = new TradeFullinfoGetRequest();
         
@@ -435,7 +434,7 @@ public class TmallDownloadOrderService {
 	private String queryOrgPK(String orgcode) {
 		return saleorgcache.get(orgcode);
 	}
-	//JSONè½¬æ¢
+	//JSON convert
     public Object trans2Obj(String str, Class cl) {
         try {
 //			str="{\"error_response\":{\"code\":27,\"msg\":\"Invalid session\",\"sub_code\":\"invalid-sessionkey\",\"request_id\":\"439fauhj7eq2\"}}";
@@ -457,12 +456,12 @@ public class TmallDownloadOrderService {
     }
     private String subStr(String cloudPlatformData) throws Exception {
         if (null == cloudPlatformData) {
-            throw new Exception("è¿”å›æ•°æ®ä¸ºç©ºï¼š" + cloudPlatformData);
+            throw new Exception("·µ»ØÊı¾İÎª¿Õ" + cloudPlatformData);
         }
         for (int i = 0; i < 2; i++) {
             if (cloudPlatformData.indexOf("}") == -1) {
-                Logger.error("è¿”å›æ•°æ®æ ¼å¼ä¸­çš„ } æœ‰é—®é¢˜ï¼š" + cloudPlatformData);
-                throw new Exception("è¿”å›æ•°æ®æ ¼å¼ä¸­çš„ } æœ‰é—®é¢˜ï¼š" + cloudPlatformData);
+                Logger.error("·µ»ØÊı¾İ¸ñÊ½ÖĞµÄ } ÓĞÎÊÌâ" + cloudPlatformData);
+                throw new Exception("·µ»ØÊı¾İ¸ñÊ½ÖĞµÄ } ÓĞÎÊÌâ" + cloudPlatformData);
             }
             cloudPlatformData = cloudPlatformData.substring(
                     cloudPlatformData.indexOf("{") + 1,
