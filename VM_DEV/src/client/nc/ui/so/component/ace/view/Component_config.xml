@@ -165,10 +165,10 @@
 				<ref bean="separatorAction" />
 				<ref bean="readyToShipAction"/>
 				<ref bean="separatorAction" />
-				<ref bean="updateToDeliveredAction"/>
+				<ref bean="linkQuerySoAction"/>
 				<ref bean="separatorAction" />
-				<ref bean="linkQueryAction" />
-				<ref bean="separatorAction" />
+				<!-- <ref bean="linkQueryAction" />
+				<ref bean="separatorAction" /> -->
 				
 
 			</list>
@@ -296,7 +296,7 @@
 		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
 	</bean>
 	<!-- Update to delivered -->
-	<bean id="updateToDeliveredAction" class="nc.ui.so.component.ace.action.UpdateToDeliveredAction">
+	<bean id="linkQuerySoAction" class="nc.ui.so.component.ace.action.LinkQuerySoAction">
 		<property name="model"><ref bean="bmModel"/></property>
 		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
 	</bean>
