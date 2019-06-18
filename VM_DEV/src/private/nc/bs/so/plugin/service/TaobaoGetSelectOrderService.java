@@ -300,19 +300,20 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
     private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date modifyStart,Date modifyEnd,Date lastModifiedTime) {
 
         try {
-        	TradesSoldIncrementGetRequest req = new TradesSoldIncrementGetRequest();
-        	
-        	 if (modifyStart != null) {
-                 req.setStartModified(modifyStart);
-             }   
-        	 
-            req.setEndModified(modifyEnd);
+        	SimpleDateFormat format = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
              
-            req.setFields("tid,status");
-            request.setRequest(req);
-            request.setMethod("getTaobaoTradesSoldIncrement");
+            OrderSourceRequest orderSourceRequest = (OrderSourceRequest) request.getRequest();
+            orderSourceRequest.setFields("tid,num,status,modified");
+            if (modifyStart != null) {
+            	orderSourceRequest.setStartCreated(format.format(modifyStart));
+            }   
+            orderSourceRequest.setEndCreated(format.format(modifyEnd));
+            
+            request.setRequest(orderSourceRequest);
+            request.setMethod("getTradesSold");
             request.setSession(token);
             request.setAccess("3");
+            
           
             return serviceUtil.execute(request);
         } catch (Exception e) {

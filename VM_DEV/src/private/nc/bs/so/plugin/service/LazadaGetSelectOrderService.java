@@ -81,7 +81,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			Logger.error("===after init lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			
-			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//开始时间
+			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");
 			
 			
 			List<String> timeList = new ArrayList<String>();
