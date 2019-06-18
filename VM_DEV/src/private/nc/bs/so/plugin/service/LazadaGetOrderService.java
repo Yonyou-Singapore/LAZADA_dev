@@ -40,7 +40,11 @@ import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
 
-
+/**
+ * 
+ * @author ll
+ * 
+ */
 public class LazadaGetOrderService extends AbstractWorkPlugin {
 
 	// /private static final Logger logger =

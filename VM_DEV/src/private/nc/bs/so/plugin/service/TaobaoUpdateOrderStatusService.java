@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,7 +54,11 @@ import com.taobao.api.request.TradesSoldIncrementGetRequest;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
 
-
+/**
+ * 
+ * @author ll
+ * 
+ */
 public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
 	DownloadMethod downloadmethod = new DownloadMethod();
@@ -203,6 +208,23 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
 
             do {
+            	
+            	//获取当天0点
+            	Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.set(Calendar.HOUR_OF_DAY, 24);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                Date today = calendar.getTime();
+            	
+                //获取明天0点
+            	
+            	Calendar tomorrowCal = Calendar.getInstance();
+            	tomorrowCal.setTime(today);
+            	tomorrowCal.set(Calendar.DATE, tomorrowCal.get(Calendar.DATE) + 1);
+            	Date tomorrow = tomorrowCal.getTime();
+               
+        
                 page++;
                 req.setPageNo(page);
                 req.setPageSize(pageSize);
@@ -212,7 +234,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
                 String fullInfoRet = "";
                 try {
                 	
-                	retStr = getOrderinfolist(token,mcloudRequest, map,updatedDay,lastModifiedTime);
+                	retStr = getOrderinfolist(token,mcloudRequest, map,today,tomorrow,lastModifiedTime);
                     Logger.info("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据" + retStr);
                 	TradesSoldGetResponse response = null;
                 	
@@ -240,9 +262,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
                                 }
 
                             } else {
-//        						//刷新token
-//        						getRefreshToken.getRefreshToken(request,shop,retStr,info);
-//        						// 下载错误日志
+//        						
                             }
                         }
                     }
@@ -268,11 +288,11 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     /**
      * 获取订单列表
      */
-    public String getOrderinfolist(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay,Date lastModifiedTime) {
+    public String getOrderinfolist(String token,MCloudRequest request, Map<String, Object> map,Date start,Date tomorrow,Date lastModifiedTime) {
     	
         if (request != null && request.getRequest() != null) {
            
-           return getOrderinfomodify(token,request, map,updatedDay,lastModifiedTime);
+           return getOrderinfomodify(token,request, map,start,tomorrow,lastModifiedTime);
             
         } else {
             return null;
@@ -287,15 +307,15 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
      * @param map
      * @return
      */
-    private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date updatedDay,Date lastModifiedTime) {
+    private String getOrderinfomodify(String token,MCloudRequest request, Map<String, Object> map,Date start,Date tomorrow,Date lastModifiedTime) {
 
         try {
         	TradesSoldIncrementGetRequest req = new TradesSoldIncrementGetRequest();
         	
-        	 if (updatedDay != null) {
-                 req.setStartModified(updatedDay);
+        	 if (start != null) {
+                 req.setStartModified(start);
              }            
-            req.setEndModified(lastModifiedTime);
+            req.setEndModified(tomorrow);
              
             req.setFields("tid,status");
             request.setRequest(req);
