@@ -32,6 +32,7 @@ import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.so.component.AggSo_ordercenter;
 import nc.vo.so.component.PlatFormVO;
+import nc.vo.so.component.PlatformEnum;
 import nc.vo.so.component.So_ordercenter;
 import nc.vo.so.component.So_ordercenter_b;
 import net.sf.json.JSONObject;
@@ -78,7 +79,7 @@ public class TmallDownloadOrderService {
 	public static Map<String, String> currencycache = null;
 
 	private void initSaleorgCache() {
-		if (saleorgcache == null) {
+		if (saleorgcache == null || currencycache == null) {
 			saleorgcache = new HashMap<String, String>();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select code, pk_salesorg from org_salesorg");
@@ -91,7 +92,7 @@ public class TmallDownloadOrderService {
 			IRowSet rowset2 = util
 					.query("select code, pk_currtype from bd_currtype");
 			while (rowset2.next()) {
-				currencycache.put(rowset.getString(0), rowset.getString(1));
+				currencycache.put(rowset2.getString(0), rowset2.getString(1));
 			}
 		}
 
@@ -380,8 +381,8 @@ public class TmallDownloadOrderService {
 		billvo.setBilltype(COBILLTYPE);
 		billvo.setTranstype(COBILLTYPE);
 		billvo.setTranstypepk(COBILLTYPE);
-//		billvo.setPk_currtype(currencycache.get(orders.get(0).getCurrency()));
-		billvo.setPlatform(PlatFormVO.TMALL);
+		billvo.setPk_currtype(currencycache.get("CNY"));
+		billvo.setPlatform(PlatformEnum.TMALL.value().toString());
 		billvo.setStatus(VOStatus.NEW);
 		
 		return billvo;

@@ -42,6 +42,11 @@ public class DownloadOrderAction extends NCAction {
 					platvos.add(vo.getPlatformcode());
 				}
 			}
+			//目前只有CN01有Tmall
+			if("SG".equals(codes[0]) && platvos.contains(PlatFormVO.TMALL)) {
+				ShowStatusBarMsgUtil.showErrorMsg("Failed", "SG no Tmall token.", getModel().getContext());
+				return;
+			}
 			
 			ILazadaService lookup = NCLocator.getInstance().lookup(ILazadaService.class);
 			lookup.downloadSelectOrderCenter(platvos.toArray(new String[0]), codes, startdate, enddate);

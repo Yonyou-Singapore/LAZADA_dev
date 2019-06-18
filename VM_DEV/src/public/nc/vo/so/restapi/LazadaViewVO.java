@@ -220,17 +220,17 @@ public class LazadaViewVO extends SuperVO {
 	@Override
 	public String getTableName() {
 		return "(select * from ( select /*主表属性*/" +
-				" h.orgid pk_org, /*pk_org*/" +
+				" h.pk_org pk_org, /*pk_org*/" +
 				" h.created_at dbilldate," + 
        " '30-Cxx-02' vtrantypecode, /*vtrantypecode*/" + 
        " b.currency corigcurrencyid,/*currecy*/" + 
        " h.billing_country country," + 
-       " decode(h.statuses, 'returned', h.order_id || '-R', h.order_id) orderid," + 
+       " decode(h.order_status, 'returned', h.order_id || '-R', h.order_id) orderid," + 
        " h.shipping_last_name || ' ' || h.shipping_first_name fullname," + 
        " h.shipping_phone shippingphone," + 
        " h.shipping_address1 || h.shipping_address2 || h.shipping_address4 fulladdress," + 
        " b.shipping_type shippingtype," + 
-       " h.statuses shippingstatus," + 
+       " h.order_status shippingstatus," + 
        " /*字表属性*/" + 
       " b.sku, " + 
        " b.qty nqtunitnum," + 

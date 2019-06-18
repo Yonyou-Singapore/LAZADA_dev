@@ -278,12 +278,17 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 	                    resultMap.put("msg","lazada平台返回发货信息错误");
 	                }
 	            }
-				
+				//如果报错,直接抛到前台
+				if(lazadaBatchDeliverResponse == null) {
+					throw new BusinessException(retStr);
+				}
+				//生成对应的销售订单
+				//更新原单状态
 				return lazadaBatchDeliverResponse.getOrder_items().toString()+"发货成功" ;
 				
 	        } catch (Exception e){
 	        	Logger.error("调用来赞达接口【SetStatusToReadyToShip】返回数据转换json异常", e);
-	        	throw new BusinessException("调用来赞达接口【SetStatusToReadyToShip】返回数据转换json异常" + e);
+	        	throw new BusinessException("Lazada返回异常:" + e);
 	        }
 	        
 		} catch (Exception e) {

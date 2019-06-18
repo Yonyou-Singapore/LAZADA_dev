@@ -31,6 +31,7 @@ import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.so.component.AggSo_ordercenter;
 import nc.vo.so.component.PlatFormVO;
+import nc.vo.so.component.PlatformEnum;
 import nc.vo.so.component.So_ordercenter;
 import nc.vo.so.component.So_ordercenter_b;
 
@@ -67,7 +68,7 @@ public class LazadaDownloadOrderService {
 	}
 	
 	private void initSaleorgCache() {
-		if(saleorgcache == null) {
+		if(saleorgcache == null || currencycache == null) {
 			saleorgcache = new HashMap<String, String>();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select code, pk_salesorg from org_salesorg");
@@ -79,7 +80,7 @@ public class LazadaDownloadOrderService {
 	        currencycache = new HashMap<String, String>();
 	        IRowSet rowset2 = util.query("select code, pk_currtype from bd_currtype");
 	        while(rowset2.next()) {
-	        	currencycache.put(rowset.getString(0), rowset.getString(1));
+	        	currencycache.put(rowset2.getString(0), rowset2.getString(1));
 	        }
 		}
 		
@@ -334,7 +335,7 @@ public class LazadaDownloadOrderService {
 		billvo.setTranstype(COBILLTYPE);
 		billvo.setTranstypepk(COBILLTYPE);
 		billvo.setPk_currtype(currencycache.get(lazadaProductsInfoResponse.get(0).getCurrency()));
-		billvo.setPlatform(PlatFormVO.LAZADA);
+		billvo.setPlatform(PlatformEnum.LAZADA.value().toString());
 //		billvo.setShopname(lazadaProductsInfoResponse.get(0).getShop_id());
 		
 		return billvo;

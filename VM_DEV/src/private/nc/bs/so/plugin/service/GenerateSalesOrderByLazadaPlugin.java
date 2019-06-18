@@ -1,14 +1,11 @@
 package nc.bs.so.plugin.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.ic.pub.util.BillQueryUtils;
@@ -32,13 +29,14 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.para.SysInitVO;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.sm.UserVO;
+import nc.vo.so.component.PlatformStatusAndPara;
 import nc.vo.so.m30.entity.SaleOrderBVO;
 import nc.vo.so.m30.entity.SaleOrderHVO;
 import nc.vo.so.m30.entity.SaleOrderVO;
 import nc.vo.so.restapi.LazadaViewVO;
 
 public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
-
+	
 	@Override
 	public PreAlertObject executeTask(BgWorkingContext bgwc)
 			throws BusinessException {
@@ -86,11 +84,11 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 			//组织可多选
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			String[] pk_orgs = bgwc.getPk_orgs();
-			List<String> orgcode = this.getOrgcode(pk_orgs);
+//			List<String> orgcode = this.getOrgcode(pk_orgs);
 			SqlBuilder sb = new SqlBuilder();
 			sb.append(" 1=1");
 			if(pk_orgs != null && pk_orgs.length > 0) {
-				sb.append(" and sb.pk_org", orgcode.toArray(new String[0]));
+				sb.append(" and sb.pk_org", pk_orgs);
 			}
 			//增加日期过滤
 			UFDate startdate = null;
@@ -110,11 +108,10 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 			} else {
 				throw new BusinessException("请设置lazada查询起始时间！销售订单集团级参数");
 			}
+			//增加状态过滤
+			sb.append(" and sb.shippingstatus", PlatformStatusAndPara.GENERATE_ORDERSTATUS);
 			Logger.error("===Lazada===" + sb.toString());
 			lazadaviewvos = (List<LazadaViewVO>) dao.retrieveByClause(LazadaViewVO.class, sb.toString());
-			if(lazadaviewvos == null || lazadaviewvos.size() <= 0) {
-				throw new BusinessException("NO SO!!!===lazada query sql===" + sb.toString());
-			}
 			return this.contructSaleOrderVO(lazadaviewvos);
 		} catch (Exception e) {
 			ExceptionUtils.wrappBusinessException(e.getMessage());
@@ -167,20 +164,20 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 				//币种
 				hvo.setCorigcurrencyid(viewvo.getCorigcurrencyid());
 				hvo.setPk_group(InvocationInfoProxy.getInstance().getGroupId());
-				if("SG".equals(viewvo.getPk_org())) {
-					hvo.setCdeptid("1001G610000000000EQ4");
-					hvo.setCcustomerid("1001G61000000000PT0E");
+				if(PlatformStatusAndPara.SG_PKORG.equals(viewvo.getPk_org())) {
+					hvo.setCdeptid(PlatformStatusAndPara.SG_DEPTID);
+					hvo.setCcustomerid(PlatformStatusAndPara.SG_CUSTOMERID);
 				} else {
-					hvo.setCdeptid("1001G61000000000S5MR");
-					hvo.setCcustomerid("1001G61000000000PCQP");
+					hvo.setCdeptid(PlatformStatusAndPara.CN_DEPTID);
+					hvo.setCcustomerid(PlatformStatusAndPara.CN_CUSTOMERID);
 					
 				}
 				hvo.setVbillcode(null);
 				//国家(交易平台) vdef1 如果是SG 设置为004 
-				if("SG".equals(viewvo.getPk_org())) {
-					hvo.setVdef1("004");//LAZADA SG
+				if(PlatformStatusAndPara.SG_PKORG.equals(viewvo.getPk_org())) {
+					hvo.setVdef1(PlatformStatusAndPara.SG_PLATFORMSTR);//LAZADA SG
 				} else {
-					hvo.setVdef1("LA-" + viewvo.getCountry());
+					hvo.setVdef1(PlatformStatusAndPara.CN_PLATFORMSTR + viewvo.getCountry());
 				}
 				//平台订单号 
 				hvo.setVdef2(viewvo.getOrderid());
@@ -234,11 +231,12 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 		Iterator<SaleOrderVO> iterator = saleordervos.iterator();
 		while(iterator.hasNext()) {
 			SaleOrderVO next = iterator.next();
-			if(this.isAlreadyGenerateSO(next)) {
+			UFBoolean returnflag = PlatformStatusAndPara.LAZADA_RETURNED.equals(next.getParentVO().getVdef20().toLowerCase()) ? UFBoolean.TRUE : UFBoolean.FALSE;
+			//假设没有几笔退货的单据
+			if(returnflag.booleanValue() && this.isAlreadyGenerateSO(next)) {
 				iterator.remove();
 				continue;
 			}
-			UFBoolean returnflag = "returned".equals(next.getParentVO().getVdef20().toLowerCase()) ? UFBoolean.TRUE : UFBoolean.FALSE;
 			if(returnflag.booleanValue()) {
 				next.getParentVO().setVdef19(UFBoolean.TRUE.toString()); 
 			} else {
