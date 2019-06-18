@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
-import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.bs.so.plugin.service.LazadaGetOrderService;
 import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
 import nc.bs.so.plugin.service.LazadaReadyToShopService;
@@ -24,7 +21,10 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
+import nc.vo.pubapp.pattern.pub.SqlBuilder;
+import nc.vo.so.component.PlatFormVO;
 import nc.vo.so.restapi.LazadaAggVO;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class LazadaServiceImpl implements ILazadaService {
 	@Override
@@ -68,9 +68,9 @@ public class LazadaServiceImpl implements ILazadaService {
 //			ExceptionUtils.wrapException(e);
 //		}
 //		return executeQuery;
-		StringBuffer sql = new StringBuffer();
-		sql.append("select distinct order_id from DATA_LAZADA_BILL WHERE order_id =");
-		sql.append(orders.get(0));
+		SqlBuilder sql = new SqlBuilder();
+		sql.append("select distinct order_id from DATA_LAZADA_BILL WHERE order_id", orders.toArray(new String[0]));
+//		sql.append(orders.get(0));
 		IRowSet rowset = new DataAccessUtils().query(sql.toString());
 		if(rowset != null && rowset.size() > 0) {
 			String[] arr = rowset.toOneDimensionStringArray();
@@ -110,11 +110,11 @@ public class LazadaServiceImpl implements ILazadaService {
 		if(platformList.size()>0){
 			for(String platformName:platformList){
 				switch(platformName){
-				case "lazada":
+				case PlatFormVO.LAZADA:
 					LazadaGetSelectOrderService lazadaservice = new LazadaGetSelectOrderService();
 					lazadaservice.execute(orgs, startdate,enddate);
 					break;
-				case "Tmall":
+				case PlatFormVO.TMALL:
 					TaobaoGetSelectOrderService taobaoservice = new TaobaoGetSelectOrderService();
 					taobaoservice.execute(orgs, startdate, enddate);
 					break;

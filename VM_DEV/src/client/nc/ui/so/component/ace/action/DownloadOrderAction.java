@@ -33,18 +33,18 @@ public class DownloadOrderAction extends NCAction {
 		dlg.execute();
 		if(dlg.getResult() == UIDialog.ID_OK){
 			String[] codes = dlg.getRefPkorgMethod().getRefCodes();
-			String startdate = dlg.getStartCalendar().getRefPK();
-			String enddate = dlg.getEndCalendar().getRefPK();
+			UFDate startdate = dlg.getStartCalendar().getDateBegin();
+			UFDate enddate = dlg.getEndCalendar().getDateEnd();
 			PlatFormVO[] bodySelectedVOs = (PlatFormVO[]) dlg.getRefPlatform().getTableModel().getBodyValueVOs(PlatFormVO.class.getName());
 			List<String> platvos = new ArrayList<String>();
 			for(PlatFormVO vo : bodySelectedVOs) {
 				if(vo.getChoose().booleanValue()) {
-					platvos.add(vo.getPlatform());
+					platvos.add(vo.getPlatformcode());
 				}
 			}
 			
 			ILazadaService lookup = NCLocator.getInstance().lookup(ILazadaService.class);
-			lookup.downloadSelectOrderCenter(platvos.toArray(new String[0]), codes, new UFDate(startdate), new UFDate(enddate));
+			lookup.downloadSelectOrderCenter(platvos.toArray(new String[0]), codes, startdate, enddate);
 			ShowStatusBarMsgUtil.showStatusBarMsg("Download order successful.",
 					getModel().getContext());
 		}

@@ -126,12 +126,12 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 				String token = sysVO.getValue();
 				String orgId = sysVO.getInitcode();
 			
-				if(orgId == platform){
+//				if(orgId == platform){
 					
 					
 					result = setOrderStatus(url.toString(),token,orgId,order_item_ids,shipProvider,trackingNo, country);
 //					
-				}
+//				}
 			}
 //			result = procOrders();
 //			System.out.print(result);

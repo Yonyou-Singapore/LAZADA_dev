@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.ui.bd.ref.IRefConst;
 import nc.ui.org.ref.SaleorgDefaultRefModel;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIDialog;
@@ -36,9 +37,10 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
 					"ordercentermenu_007")/* @res "选择" */,
 			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
-					"ordercentermenu_008") /* @res "平台" */
+					"ordercentermenu_008") /* @res "平台" */,
+					"platformcode"
 	};
-	public static String[] saBodyColKey = new String[] { "choose", "platform" };
+	public static String[] saBodyColKey = new String[] { "choose", "platformname", "platformcode" };
 
 	private static List<PlatFormVO> platforms = null;
 
@@ -48,13 +50,15 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 			platforms = new ArrayList<PlatFormVO>();
 			PlatFormVO tmall = new PlatFormVO();
 			tmall.setChoose(UFBoolean.FALSE);
-			tmall.setPlatform(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
+			tmall.setPlatformname(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
 					"ordercentermenu_012") /* @res "天猫" */);
+			tmall.setPlatformcode(PlatFormVO.TMALL);
 			platforms.add(tmall);
 			PlatFormVO lazada = new PlatFormVO();
 			lazada.setChoose(UFBoolean.FALSE);
-			lazada.setPlatform(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
+			lazada.setPlatformname(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("menucode",
 					"ordercentermenu_013") /* @res "lazada" */);
+			lazada.setPlatformcode(PlatFormVO.LAZADA);
 			platforms.add(lazada);
 
 		}
@@ -127,19 +131,18 @@ public class DownloadOrderDialog extends JOKCancelDialog {
             sb.append(" from sm_user_role ur, sm_subject_org subjectorg");
             sb.append(" where ur.pk_role = subjectorg.subjectid) urg where 1 = 1");
             sb.append(" and urg.cuserid in ('" + userId + "'))");
-			
 			orgmodel.setWherePart(sb.toString());
 			pk_orgpanel.setRefModel(orgmodel);
-			pk_orgpanel.setMultiSelectedEnabled(true);
+			pk_orgpanel.setMultiSelectedEnabled(false);
 		}
 		return pk_orgpanel;
 	}
 
 	public UIRefPane getStartCalendar() {
 		if (startdatepanel == null) {
-			startdatepanel = new UIRefPane("日历");
-			startdatepanel.setPK(WorkbenchEnvironment.getInstance()
-					.getBusiDate().toLocalString());
+			startdatepanel = new UIRefPane(IRefConst.REFNODENAME_CALENDAR);
+//			startdatepanel.setPK(WorkbenchEnvironment.getInstance()
+//					.getBusiDate().toLocalString());
 			startdatepanel.setPreferredSize(new Dimension(110, 50));
 			startdatepanel.getUITextField().setShowMustInputHint(true);
 		}
@@ -148,9 +151,9 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 
 	public UIRefPane getEndCalendar() {
 		if (enddatepanel == null) {
-			enddatepanel = new UIRefPane("日历");
-			enddatepanel.setPK(WorkbenchEnvironment.getInstance().getBusiDate()
-					.toLocalString());
+			enddatepanel = new UIRefPane(IRefConst.REFNODENAME_CALENDAR);
+//			enddatepanel.setPK(WorkbenchEnvironment.getInstance().getBusiDate()
+//					.toLocalString());
 			enddatepanel.setPreferredSize(new Dimension(110, 50));
 			enddatepanel.getUITextField().setShowMustInputHint(true);
 		}
@@ -179,6 +182,7 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 			}
 			biaBody[0].setEdit(true);
 			biaBody[0].setDataType(IBillItem.BOOLEAN);
+			biaBody[2].setShow(false);
 
 			this.getBillModelPlatForm().setBodyItems(biaBody);
 			this.getBillModelPlatForm().setBodyDataVO(platforms.toArray(new PlatFormVO[0]));
