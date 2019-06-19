@@ -49,13 +49,13 @@ import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradeFullinfoGetRequest;
+import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradesSoldIncrementGetRequest;
 
-import com.taobao.api.request.TradesSoldIncrementGetRequest;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
 
 /**
- * 
+ * 淘宝订单更新定时任务
  * @author ll
  * 
  */
@@ -212,7 +212,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
             	//获取当天0点
             	Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
-                calendar.set(Calendar.HOUR_OF_DAY, 24);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
                 calendar.set(Calendar.SECOND, 0);
                 Date today = calendar.getTime();
@@ -311,11 +311,12 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
         try {
         	TradesSoldIncrementGetRequest req = new TradesSoldIncrementGetRequest();
+        	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         	
         	 if (start != null) {
-                 req.setStartModified(start);
+                 req.setStartModified(format.format(start));
              }            
-            req.setEndModified(tomorrow);
+            req.setEndModified(format.format(tomorrow));
              
             req.setFields("tid,status");
             request.setRequest(req);
@@ -454,6 +455,11 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(taobaoBillTransform.convertTaobaoBill(trade,orgId,url), 
 							taobaoBillTransform.convertTaobaoBillItem(trade,trade.getOrders()));
 				}else {
+					
+//					NCLocator.getInstance().lookup(ILazadaService.class).updateTmallStatus(taobaoBillTransform.convertTaobaoBill(trade,orgId,url), 
+//							taobaoBillTransform.convertTaobaoBillItem(trade,trade.getOrders()));
+//					
+					
 					dbProcessForTaobaoStatusUpdate(trade,format.format(lastModifiedTime));
 				}
 

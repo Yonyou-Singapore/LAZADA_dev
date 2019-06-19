@@ -53,6 +53,22 @@ public class LazadaServiceImpl implements ILazadaService {
 		}
 	}
 	
+	
+	@Override
+	public void updateTmallStatus(LazadaBillVO[] headvos,
+			LazadaBillItemVO[] itemvos) {
+		// TODO Auto-generated method stub
+		String[] fieldNames = {"statuses"};
+		String[] fieldNames2 = {"Invoice_number"};
+		
+		try {
+			new BaseDAO().updateVOArray(headvos, fieldNames);
+			new BaseDAO().updateVOArray(itemvos, fieldNames2);
+		} catch (DAOException e) {
+			ExceptionUtils.wrappBusinessException(e.getMessage());
+		}
+	}
+	
 
 
 	@Override

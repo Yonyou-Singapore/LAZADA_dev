@@ -37,6 +37,9 @@ public interface ILazadaService {
 	 */
 	void insertlazadaresponse(LazadaBillVO[] headvos, LazadaBillItemVO[] itemvos);
 	
+	void updateTmallStatus(LazadaBillVO[] headvos,
+			LazadaBillItemVO[] itemvos);
+	
 	
 	/**
 	 * ejb ≤È—Ø
