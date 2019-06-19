@@ -8,7 +8,7 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.so.m30.entity.SaleOrderVO;
+import nc.vo.so.component.AggSo_ordercenter;
 import nc.vo.so.restapi.LazadaAggVO;
 
 /**
@@ -81,4 +81,10 @@ public interface ILazadaService {
 	 */
 	public String updateLazadaOrderStatus(String order_item_ids, String platform,String shipProvider,String trackingNo,String country) throws BusinessException;
 	
+	/**
+	 * 生成销售订单
+	 * @param agg
+	 * @throws BusinessException
+	 */
+	void generateSalesOrderByOrdercenter(AggSo_ordercenter agg) throws BusinessException;
 }

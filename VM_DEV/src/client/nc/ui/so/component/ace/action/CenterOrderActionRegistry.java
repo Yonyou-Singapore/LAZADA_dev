@@ -28,9 +28,13 @@ public class CenterOrderActionRegistry {
 		            "ordercentermenu_004"/* @res "发货(ALT+F)" */, null,
 		            KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.ALT_MASK)),
 	            new ActionInfo(CenterOrderMenuCode.UPDATETODELIVERED, "menucode",
-			            "ordercentermenu_005"/* @res "更新电商状态" */,
-			            "ordercentermenu_006"/* @res "更新电商状态(ALT+U)" */, null,
-			            KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_MASK))
+			            "ordercentermenu_005"/* @res "联查销售订单" */,
+			            "ordercentermenu_006"/* @res "联查销售订单(ALT+U)" */, null,
+			            KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.ALT_MASK)),
+	            new ActionInfo(CenterOrderMenuCode.GENERATESO, "menucode",
+			            "ordercentermenu_014"/* @res "生成销售订单" */,
+			            "ordercentermenu_015"/* @res "生成销售订单(ALT+G)" */, null,
+			            KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.ALT_MASK))
 		  };
 		  static {
 			    for (ActionInfo info : CenterOrderActionRegistry.infos) {

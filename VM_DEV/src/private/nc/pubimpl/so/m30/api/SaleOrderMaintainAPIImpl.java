@@ -117,26 +117,26 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
     	//sku 匹配
     	this.setSkuPk(vos, queryHelpSkuPK, queryCodeSkuPK);
     	//组织匹配
-    	this.setPk_org(vos);
+//    	this.setPk_org(vos);
     	//自定义项
     	this.setDef(vos);
     	//币种
-    	Map<String, String> idCOdeMap = new HashMap<String, String>();
-    	Set<String> defcodes = new HashSet<String>();
-    	for(SaleOrderVO vo : vos) {
-    		defcodes.add(vo.getParentVO().getCorigcurrencyid());
-    	}
-    	SqlBuilder sb = new SqlBuilder();
-    	sb.append("select code, pk_currtype from bd_currtype where");
-    	sb.append(" code", defcodes.toArray(new String[0]));
-    	DataAccessUtils util = new DataAccessUtils();
-    	IRowSet rowset = util.query(sb.toString());
-    	while (rowset.next()) {
-    		idCOdeMap.put(rowset.getString(0), rowset.getString(1));
-    	}
-    	for(SaleOrderVO vo : vos) {
-    		vo.getParentVO().setCorigcurrencyid(idCOdeMap.get(vo.getParentVO().getCorigcurrencyid()));
-    	}
+//    	Map<String, String> idCOdeMap = new HashMap<String, String>();
+//    	Set<String> defcodes = new HashSet<String>();
+//    	for(SaleOrderVO vo : vos) {
+//    		defcodes.add(vo.getParentVO().getCorigcurrencyid());
+//    	}
+//    	SqlBuilder sb = new SqlBuilder();
+//    	sb.append("select code, pk_currtype from bd_currtype where");
+//    	sb.append(" code", defcodes.toArray(new String[0]));
+//    	DataAccessUtils util = new DataAccessUtils();
+//    	IRowSet rowset = util.query(sb.toString());
+//    	while (rowset.next()) {
+//    		idCOdeMap.put(rowset.getString(0), rowset.getString(1));
+//    	}
+//    	for(SaleOrderVO vo : vos) {
+//    		vo.getParentVO().setCorigcurrencyid(idCOdeMap.get(vo.getParentVO().getCorigcurrencyid()));
+//    	}
 		
 	}
 
