@@ -145,6 +145,38 @@
 			</bean>
 
 		</property>
+		<property name="model">
+			<ref bean="bmModel" />
+		</property>		
+		<!--
+		<property name="model">
+			<ref bean="$vmObject.topActionDependModel"/>
+		</property>
+		-->
+	</bean>
+	
+	<!-- 打开节点监听 newadd-->
+	<bean id="InitDataListener" class="nc.ui.pubapp.uif2app.model.DefaultFuncNodeInitDataListener">
+		<property name="model" ref="bmModel"/>
+		<property name="context" ref="context"></property>
+		<property name="voClassName" value="nc.vo.so.component.AggSo_ordercenter"/>
+	</bean>
+
+	<!-- weiningc -->
+	<!-- 此bean不是必须的，如果没有各个界面按钮的差异，可以将一下三个bean都去掉 -->
+	<bean id="toftpanelActionContributors" class="nc.ui.uif2.actions.ActionContributors">
+		<property name="contributors">
+			<list>
+				<ref bean="actionsOfList" />
+				<ref bean="actionsOfCard" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 构造方法中传入的界面显示时，配置的Action才可见 -->
+	<bean id="actionsOfList" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg ref="billListView" />
+		<!-- 可以配置非编辑状态下和编辑状态下分别可见的Action，没有此需求时可以配置得一样 -->
 		<property name="actions">
 			<list>
 				<!-- <ref bean="editAction" />
@@ -167,39 +199,47 @@
 				<ref bean="separatorAction" />
 				<ref bean="linkQuerySoAction"/>
 				<ref bean="separatorAction" />
-				<!-- <ref bean="linkQueryAction" />
-				<ref bean="separatorAction" /> -->
-				
-
+				<ref bean="generateSoAction" />
+				<ref bean="separatorAction" />
 			</list>
 		</property>
-		
-		<property name="editActions">
+	</bean>
+
+	<!-- 构造方法中传入的界面显示时，配置的Action才可见 -->
+	<bean id="actionsOfCard" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg ref="billForm" />
+		<!-- 可以配置非编辑状态下和编辑状态下分别可见的Action，没有此需求时可以配置得一样 -->
+		<property name="actions">
 			<list>
-				<ref bean="saveAction" />
-				<ref bean="cancelAction" />
-				
+				<!-- <ref bean="editAction" />
+				<ref bean="deleteAction" />
+				<ref bean="addAction" />
+				<ref bean="copyAction" />
+				<ref bean="separatorAction" />
+				<ref bean="separatorAction" />
+				<ref bean="metaDataBasedPrintAction" />
+				<ref bean="metaDataBasedPrintActiona" />
+				<ref bean="outputAction" /> 
+				<ref bean="separatorAction" /> -->
+				<ref bean="defaultQueryAction" />
+				<ref bean="separatorAction" />
+				<ref bean="cardRefreshAction" />
+				<ref bean="separatorAction" />
+				<ref bean="downloadOrderAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="readyToShipAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="linkQuerySoAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="generateSoAction" />
+				<ref bean="separatorAction" />
 			</list>
 		</property>
-
+		<!-- 需要把model注入，状态从model中获得 -->
 		<property name="model">
 			<ref bean="bmModel" />
 		</property>		
-		<!--
-		<property name="model">
-			<ref bean="$vmObject.topActionDependModel"/>
-		</property>
-		-->
 	</bean>
-	
-	<!-- 打开节点监听 newadd-->
-	<bean id="InitDataListener" class="nc.ui.pubapp.uif2app.model.DefaultFuncNodeInitDataListener">
-		<property name="model" ref="bmModel"/>
-		<property name="context" ref="context"></property>
-		<property name="voClassName" value="nc.vo.so.component.AggSo_ordercenter"/>
-	</bean>
-
-
 
 	<!-- ClosingListener 编辑态关闭节点时提示是否保存//newadd***************************************************-->
 	<!-- 节点关闭前校验 -->
@@ -334,10 +374,22 @@
 		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
 	</bean>
 
-	<!--======= 动作：[newActions] [刷新] ===========-->
+	<!--======= 动作：列表[newActions] [刷新] ===========-->
 	<bean id="defaultRefreshAction" class="nc.ui.pubapp.uif2app.query2.action.DefaultRefreshAction">
 		<property name="model"><ref bean="bmModel"/></property>
 		<property name="dataManager"><ref bean="bmModelModelDataManager"/></property>
+		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
+	</bean>
+	
+	<!--======= 动作：卡片[newActions] [刷新] ===========-->
+	<bean id="cardRefreshAction" class="nc.ui.pubapp.uif2app.actions.RefreshSingleAction">
+		<property name="model"><ref bean="bmModel"/></property>
+		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
+	</bean>
+	
+	<!--======= 动作：卡片[newActions] [生成销售订单] ===========-->
+	<bean id="generateSoAction" class="nc.ui.so.component.ace.action.GenerateSoAction">
+		<property name="model"><ref bean="bmModel"/></property>
 		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
 	</bean>
 
