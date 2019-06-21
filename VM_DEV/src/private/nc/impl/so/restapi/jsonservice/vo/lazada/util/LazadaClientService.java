@@ -155,7 +155,7 @@ public class LazadaClientService {
 	 * @return
 	 */
 	
-       public String SetStatusToPackedByMarketplace(String url, String accessToken, String orderItemIds,String shipProvider) {
+	public String SetStatusToPackedByMarketplace(String url, String accessToken, String orderItemIds,String shipProvider) {
 		
 		try {	
 			
@@ -201,8 +201,7 @@ public class LazadaClientService {
 			
 			return response.getBody();
 
-		} catch (Exception e) {
-			
+		} catch (Exception e) {		
 			Logger.error("来赞达平台调用刷新access_token接口异常" + e.getMessage(), e);
 			return null;
 		}

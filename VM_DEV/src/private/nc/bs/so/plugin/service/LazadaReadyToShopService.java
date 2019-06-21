@@ -66,12 +66,9 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 		add("https://api.lazada.co.th/rest");
 		add("https://api.lazada.vn/rest");
 	}};
-	
-	
+
 	private ILazadaService lazadaService;
-	
-	
-	
+
 
 	@Override
 	public PreAlertObject executeTask(BgWorkingContext bgwc)
@@ -81,7 +78,7 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 	}
 	
 	
-	public String execute(String order_item_ids,String platform, String shipProvider,String trackingNo,String country)
+	public String execute(String order_item_ids,String org, String shipProvider,String trackingNo,String country)
 			throws BusinessException {
 
 		String result = "";
@@ -126,12 +123,9 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 				String token = sysVO.getValue();
 				String orgId = sysVO.getInitcode();
 			
-//				if(orgId == platform){
-					
-					
+				if(orgId == org){
 					result = setOrderStatus(url.toString(),token,orgId,order_item_ids,shipProvider,trackingNo, country);
-//					
-//				}
+				}
 			}
 //			result = procOrders();
 //			System.out.print(result);
@@ -185,72 +179,76 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 	
 		try {
 		
-		
-			//调用lazada接口请求供应商
-			
-			LazadaExpressCompanyResponse lazadaExpressCompanyResponse = null;
-	        LazadaShipProviders[] shipment_providers = null;
-	        try {
-	        	String retShipmentProvider = lazadaClientService.GetShipmentProviders(url, token);
-	            Logger.info("调用lazada接口请求发货商" + retShipmentProvider);
-				
-	            LazadaExpressCompanyDataResponse lazadaExpressCompanyDataResponse = new Gson().fromJson(retShipmentProvider, LazadaExpressCompanyDataResponse.class);
-	            lazadaExpressCompanyResponse = lazadaExpressCompanyDataResponse.getData();
-	            shipment_providers = lazadaExpressCompanyResponse.getShipment_providers();
-	        } catch (Exception e) {
-	        	Logger.error("调用来赞达接口【getShipmentProviders】返回数据转换json异常", e);
-	        	throw new BusinessException("调用来赞达接口【getShipmentProviders】返回数据转换json异常" + e);
-	        }
-			
+//			StringBuffer shipment_provider = new StringBuffer();
+//			
+//			if(shipProvider!=null && shipProvider.length()>0){
+//				shipment_provider.append(shipProvider);
+//			}else{
+//				
+//				//调用lazada接口请求供应商
+//				
+//				LazadaExpressCompanyResponse lazadaExpressCompanyResponse = null;
+//		        LazadaShipProviders[] shipment_providers = null;
+//		        try {
+//		        	String retShipmentProvider = lazadaClientService.GetShipmentProviders(url, token);
+//		            Logger.info("调用lazada接口请求发货商" + retShipmentProvider);
+//					
+//		            LazadaExpressCompanyDataResponse lazadaExpressCompanyDataResponse = new Gson().fromJson(retShipmentProvider, LazadaExpressCompanyDataResponse.class);
+//		            lazadaExpressCompanyResponse = lazadaExpressCompanyDataResponse.getData();
+//		            shipment_providers = lazadaExpressCompanyResponse.getShipment_providers();
+//		        } catch (Exception e) {
+//		        	Logger.error("调用来赞达接口【getShipmentProviders】返回数据转换json异常", e);
+//		        	throw new BusinessException("调用来赞达接口【getShipmentProviders】返回数据转换json异常" + e);
+//		        }
+//				
+//		        
+//		        if(shipment_providers.length<1){
+//		        	Logger.info("调用来赞达接口【getShipmentProviders】没有找到默认发货供应商");
+//		        	throw new BusinessException("没有找到默认运输供应商");	
+//		        }
+//		        
+//		        shipment_provider.append(shipment_providers[0].getName());
+//			
+//			}
+//	        
+//	        
+//	        //SetStatusToPackedByMarketplace
+//			//调用lazada接口请求运单号
+//	        
+//	        StringBuffer trackingInfo = new StringBuffer();
+//	        LazadaPackedByMarketResponse lazadaPackedByMarketResponse = new LazadaPackedByMarketResponse();
+//			
+//	        
+//	        try {
+//	        	
+//	        	String retPackMarket = lazadaClientService.SetStatusToPackedByMarketplace(url, token, order_item_ids,shipment_provider.toString());
+//	            Logger.info("调用lazada接口SetStatusToPackedByMarketplace" + retPackMarket);
+//	            if (org.apache.commons.lang.StringUtils.isNotEmpty(retPackMarket)) {
+//		            LazadaPackedByMarketDataResponse lazadaPackedByMarketDataResponse = new Gson().fromJson(retPackMarket, LazadaPackedByMarketDataResponse.class);
+//		            lazadaPackedByMarketResponse = lazadaPackedByMarketDataResponse.getData();
+//	        	 }
+//	            
+//	           
+//				
+//				
+//				if (lazadaPackedByMarketResponse != null) {
+//	                if (lazadaPackedByMarketResponse.getPacked_Market_infos().length > 0) {
+//	                   trackingInfo.append(lazadaPackedByMarketResponse.getPacked_Market_infos()[0].getTracking_number());
+//	                    
+//	                } else {
+//	                	throw new BusinessException("调用来赞达接口【SetStatusToPackedByMarketplace】返回数据转换json异常");  
+//	                }
+//	            }
+//	            
+//	        } catch (Exception e) {
+//	        	Logger.error("调用来赞达接口【getShipmentProviders】返回数据转换json异常", e);
+//	        	throw new BusinessException("调用来赞达接口【getShipmentProviders】返回数据转换json异常" + e);
+//	        }
+//			
+//	   
 	        
-	        if(shipment_providers.length<1){
-	        	Logger.info("调用来赞达接口【getShipmentProviders】没有找到默认发货供应商");
-	        	throw new BusinessException("没有找到默认运输供应商");	
-	        }
 	        
-	        
-	        
-	        
-	        
-	        
-	        //SetStatusToPackedByMarketplace
-			//调用lazada接口请求运单号
-	        String shipment_provider = shipment_providers[0].getName();
-	        StringBuffer trackingInfo = new StringBuffer();
-	        LazadaPackedByMarketResponse lazadaPackedByMarketResponse = new LazadaPackedByMarketResponse();
-			
-	        
-	        try {
-	        	
-	        	
-	        	String retPackMarket = lazadaClientService.SetStatusToPackedByMarketplace(url, token, order_item_ids,shipment_provider);
-	            Logger.info("调用lazada接口SetStatusToPackedByMarketplace" + retPackMarket);
-	            if (org.apache.commons.lang.StringUtils.isNotEmpty(retPackMarket)) {
-		            LazadaPackedByMarketDataResponse lazadaPackedByMarketDataResponse = new Gson().fromJson(retPackMarket, LazadaPackedByMarketDataResponse.class);
-		            lazadaPackedByMarketResponse = lazadaPackedByMarketDataResponse.getData();
-	        	 }
-	            
-	           
-				
-				
-				if (lazadaPackedByMarketResponse != null) {
-	                if (lazadaPackedByMarketResponse.getPacked_Market_infos().length > 0) {
-	                   trackingInfo.append(lazadaPackedByMarketResponse.getPacked_Market_infos()[0].getTracking_number());
-	                    
-	                } else {
-	                	throw new BusinessException("调用来赞达接口【SetStatusToPackedByMarketplace】返回数据转换json异常");  
-	                }
-	            }
-	            
-	        } catch (Exception e) {
-	        	Logger.error("调用来赞达接口【getShipmentProviders】返回数据转换json异常", e);
-	        	throw new BusinessException("调用来赞达接口【getShipmentProviders】返回数据转换json异常" + e);
-	        }
-			
-	   
-	        
-	        
-	        //SetStatusToPackedByMarketplace
+	        //SetStatusToReadyToShip
 	        
 	        //调用lazada接口发货
 	        
@@ -259,7 +257,7 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 			
 	        try{
 	        	
-				String retStr = lazadaClientService.SetStatusToReadyToShip(url,token,order_item_ids,shipment_provider, trackingInfo.toString());
+				String retStr = lazadaClientService.SetStatusToReadyToShip(url,token,order_item_ids,null, null);
 
 				Logger.info("调用lazada接口将订单状态设置为发货" + retStr);
 				

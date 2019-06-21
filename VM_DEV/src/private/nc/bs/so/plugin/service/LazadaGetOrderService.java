@@ -175,7 +175,7 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 			do {
 				page++;
 
-				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,true,null);
+				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,null);
 
 				Logger.info("调用数据通获取原单列表接口【getOrders】返回数据" + retStr);
 				//保存请求数据
@@ -206,7 +206,9 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 
 							if (items == null || items.size() == 0)
 								break;
-							taskList.add(new InvokeDownload(url,token,orgId,items));
+							
+							new LazadaDownloadOrderService(url, token, orgId, items).call();
+							//taskList.add(new LazadaDownloadOrderService(url,token,orgId,items));
 						}
 					} else {
 						return "取到的数据为空!";
@@ -315,12 +317,9 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 				Logger.info("原单下载，调用lazada接口 检索单个订单信息 返回数据" +itemsByOrderId);
 				 //list.add(itemsByOrderId);
 			}
-
 //			System.out.print(lazadaGetOrderDetaillist);
-		
 			JSONArray toJSON = lazadaJsonUtil.convertJSON(lazadaGetOrderDetaillist);		
 			newmap.put("result", toJSON);
-			
 			return newmap;
 		}
 	}
