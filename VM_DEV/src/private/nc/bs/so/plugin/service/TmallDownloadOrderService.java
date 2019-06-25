@@ -169,8 +169,10 @@ public class TmallDownloadOrderService {
             	}
 
             }
-            AceComponentInsertBP bp = new AceComponentInsertBP();
-    		bp.insert(aggs.toArray(new AggSo_ordercenter[0]));
+            if(aggs.size()>0){
+            	AceComponentInsertBP bp = new AceComponentInsertBP();
+          		bp.insert(aggs.toArray(new AggSo_ordercenter[0]));
+            }
         
             return returnval;
         } catch (Exception e) {

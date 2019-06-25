@@ -51,6 +51,10 @@ import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
 
 
+/**
+ * created ll
+ */
+
 public class TaobaoGetOrderService extends AbstractWorkPlugin {
 
 	DownloadMethod downloadmethod = new DownloadMethod();
@@ -234,6 +238,8 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
             request.setRequest(req);
             Map<String, Object> map = new HashMap<String, Object>();
            
+            
+            Date lastModifiedTime = new Date();
             String retStr = "";
             try {
             	
@@ -255,7 +261,8 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
 
                             if (null != list) {
                                 MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
-                                taskList.add(new InvokeDownload(token,inRequest, list,orgId));
+                                new TmallDownloadOrderService(token, inRequest, list, orgId, lastModifiedTime).call();
+                                //taskList.add(new InvokeDownload(token,inRequest, list,orgId));
                             }
                             if (StringUtils.isNotBlank(response.getErrorCode())) {
 //    							//刷新token
@@ -272,7 +279,7 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
                     }
                 }
             	
-            	resultString = downloadmethod.executeDownloadTask(taskList);
+            	//resultString = downloadmethod.executeDownloadTask(taskList);
                 return resultString;
                 
             } catch (Exception e) {
@@ -368,151 +375,151 @@ public class TaobaoGetOrderService extends AbstractWorkPlugin {
     }
 
     
-    private class InvokeDownload implements Callable<Map<String, Object>> {
-    	String token;
-    	MCloudRequest inRequest;
-    	List<Trade> list;
-    	String orgId;
-        
-
-        public InvokeDownload(String token, MCloudRequest inRequest,List<Trade> list,String orgId) {
-        	this.token = token;
-        	this.inRequest = inRequest;
-            this.list = list;
-            this.orgId = orgId;
-           
-        }
-
-        @Override
-        public Map<String, Object> call() throws Exception {
-
-            List<Long> tids = new ArrayList<Long>();
-            for (Trade item : list) {
-                tids.add(item.getTid());
-            }
-
-            //Map<String,Object> result = new HashMap<String,Object>();
-            if (tids.size() > 0) {
-                List<Trade> retHashMap = new ArrayList<Trade>();
-                return processItems(token,inRequest, list,retHashMap,orgId);
-            }
-
-            return null;
-        }
-    }
+//    private class InvokeDownload implements Callable<Map<String, Object>> {
+//    	String token;
+//    	MCloudRequest inRequest;
+//    	List<Trade> list;
+//    	String orgId;
+//        
+//
+//        public InvokeDownload(String token, MCloudRequest inRequest,List<Trade> list,String orgId) {
+//        	this.token = token;
+//        	this.inRequest = inRequest;
+//            this.list = list;
+//            this.orgId = orgId;
+//           
+//        }
+//
+//        @Override
+//        public Map<String, Object> call() throws Exception {
+//
+//            List<Long> tids = new ArrayList<Long>();
+//            for (Trade item : list) {
+//                tids.add(item.getTid());
+//            }
+//
+//            //Map<String,Object> result = new HashMap<String,Object>();
+//            if (tids.size() > 0) {
+//                List<Trade> retHashMap = new ArrayList<Trade>();
+//                return processItems(token,inRequest, list,retHashMap,orgId);
+//            }
+//
+//            return null;
+//        }
+//    }
+//    
+    
+//    /**
+//     * 保存更新交易订单详细数据
+//     */
+//    private Map<String, Object> processItems(String token,MCloudRequest inRequest,List<Trade> insList,List<Trade> retHashMap,String orgId) {
+//    	
+//        try {
+//        	Map<String, Object> returnval=new HashMap<String, Object>();
+//            List<String> list = new ArrayList<String>();
+//            for (int i = 0; i < insList.size(); i++) {
+//
+//            	
+//            	//取单据Tid
+//                String tid = String.valueOf(insList.get(i).getTid());
+//                
+//                String retStr1 = getTopFullinfo(token,inRequest, tid);
+//                Logger.info("调用淘宝接口 taobao.trade.fullinfo.get " + retStr1);
+//        
+//                
+//            	TradeFullinfoGetResponse response = (TradeFullinfoGetResponse) trans2Obj(retStr1, TradeFullinfoGetResponse.class);
+//            	
+//            	String errorCode = response.getErrorCode();
+//    			Logger.info("wyd rds errorCode" + errorCode);
+//    			if(StringUtils.isNotBlank(errorCode)){
+//    				Logger.error(errorCode + response.getSubMsg() );
+//    				throw new BusinessException(response.getSubMsg());
+//    			}
+//    			
+//    			
+//    			String url = "http://sjt.yonyoucloud.com/servlet/BaseHttpServlet";
+//        		Trade trade=response.getTrade();
+//        		List<Order> orderList = trade.getOrders();
+//        		
+//        		List<String> orderids = new ArrayList<String>();				
+//				orderids.add(trade.getTid().toString());
+//        		Logger.error("===query before lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+//				if(!RuntimeEnv.getInstance().isDevelopMode()) {
+//					InvocationInfoProxy.getInstance().setUserDataSource("VM");
+//				} else if(InvocationInfoProxy.getInstance().getUserDataSource() == null){
+//					InvocationInfoProxy.getInstance().setUserDataSource("VM");
+//				}
+//				Logger.error("===query after lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
+//				List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
+//				
+//				if(existOrder.size()<=0){
+//					
+//					//交给ejb进行事务管控 add by weiningc 20190428
+//					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(taobaoBillTransform.convertTaobaoBill(trade,orgId,url), 
+//							taobaoBillTransform.convertTaobaoBillItem(trade,trade.getOrders()));
+//				
+//
+//				}	
+//        		
+//        		
+//                
+//            }
+//
+//           
+//            return returnval;
+//        } catch (Exception e) {
+//            Logger.info("getSourceDetail error:" + e.getMessage());
+//            Logger.error(e.getMessage(), e);
+//            return null;
+//        }
+//
+//        //return result;
+//    }
     
     
-    /**
-     * 保存更新交易订单详细数据
-     */
-    private Map<String, Object> processItems(String token,MCloudRequest inRequest,List<Trade> insList,List<Trade> retHashMap,String orgId) {
-    	
-        try {
-        	Map<String, Object> returnval=new HashMap<String, Object>();
-            List<String> list = new ArrayList<String>();
-            for (int i = 0; i < insList.size(); i++) {
-
-            	
-            	//取单据Tid
-                String tid = String.valueOf(insList.get(i).getTid());
-                
-                String retStr1 = getTopFullinfo(token,inRequest, tid);
-                Logger.info("调用淘宝接口 taobao.trade.fullinfo.get " + retStr1);
-        
-                
-            	TradeFullinfoGetResponse response = (TradeFullinfoGetResponse) trans2Obj(retStr1, TradeFullinfoGetResponse.class);
-            	
-            	String errorCode = response.getErrorCode();
-    			Logger.info("wyd rds errorCode" + errorCode);
-    			if(StringUtils.isNotBlank(errorCode)){
-    				Logger.error(errorCode + response.getSubMsg() );
-    				throw new BusinessException(response.getSubMsg());
-    			}
-    			
-    			
-    			String url = "http://sjt.yonyoucloud.com/servlet/BaseHttpServlet";
-        		Trade trade=response.getTrade();
-        		List<Order> orderList = trade.getOrders();
-        		
-        		List<String> orderids = new ArrayList<String>();				
-				orderids.add(trade.getTid().toString());
-        		Logger.error("===query before lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
-				if(!RuntimeEnv.getInstance().isDevelopMode()) {
-					InvocationInfoProxy.getInstance().setUserDataSource("VM");
-				} else if(InvocationInfoProxy.getInstance().getUserDataSource() == null){
-					InvocationInfoProxy.getInstance().setUserDataSource("VM");
-				}
-				Logger.error("===query after lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
-				List<String> existOrder = NCLocator.getInstance().lookup(ILazadaService.class).queryExistLazadaOrder(orderids);
-				
-				if(existOrder.size()<=0){
-					
-					//交给ejb进行事务管控 add by weiningc 20190428
-					NCLocator.getInstance().lookup(ILazadaService.class).insertlazadaresponse(taobaoBillTransform.convertTaobaoBill(trade,orgId,url), 
-							taobaoBillTransform.convertTaobaoBillItem(trade,trade.getOrders()));
-				
-
-				}	
-        		
-        		
-                
-            }
-
-           
-            return returnval;
-        } catch (Exception e) {
-            Logger.info("getSourceDetail error:" + e.getMessage());
-            Logger.error(e.getMessage(), e);
-            return null;
-        }
-
-        //return result;
-    }
-    
-    
-    //取订单详细信息
-    private String getTopFullinfo(String token,MCloudRequest request, String tid) {
-        TradeFullinfoGetRequest req = new TradeFullinfoGetRequest();
-        
-        request.setRequest(req);
-        request.setSession(token);
-        request.setAccess("3");
-        
-        Map<String, Object> maps = new HashMap<String, Object>();
-        return getTOPOrderFullinfo(request, maps,tid);
-    }
-
-    
-    public String getTOPOrderFullinfo(MCloudRequest request, Map<String, Object> map,String tid) {
-
-        try {
-            TradeFullinfoGetRequest orderSourceRequest = (TradeFullinfoGetRequest) request.getRequest();
-            StringBuilder sbField = new StringBuilder();
-            sbField.append("buyerTaxNO,buyer_nick,coupon_fee,price,pic_path,title,type,created,tid,seller_rate,buyer_flag,buyer_rate,status,payment,adjust_fee,post_fee,total_fee,");
-            sbField.append("pay_time,end_time,modified,consign_time,buyer_obtain_point_fee,point_fee,real_point_fee,received_payment,commission_fee,");
-            sbField.append("buyer_memo,seller_memo,alipay_no,alipay_id,buyer_message,num_iid,num,buyer_alipay_no,receiver_name,receiver_state,receiver_city,");
-            sbField.append("receiver_district,receiver_town,receiver_address,receiver_zip,receiver_mobile,receiver_phone,seller_flag,available_confirm_fee,has_post_fee,");
-            sbField.append("timeout_action_time,cod_fee,cod_status,shipping_type,trade_memo,is_3D,buyer_email,buyer_area,trade_from,is_lgtype,is_force_wlb,");
-            sbField.append("is_brand_sale,buyer_cod_fee,discount_fee,seller_cod_fee,express_agency_fee,invoice_name,service_orders, buyer_memo,buyer_flag,is_part_consign,");
-            sbField.append("orders.refund_status,orders.title,orders.price,orders.num,orders.num_iid,orders.sku_id,orders.status,orders.oid,orders.total_fee,orders.payment,orders.discount_fee,orders.adjust_fee,");
-            sbField.append("orders.sku_properties_name,orders.item_meal_name,orders.item_meal_id,item_memo,orders.buyer_rate,orders.seller_rate,orders.outer_iid,orders.outer_sku_id,");
-            sbField.append("orders.refund_id,orders.seller_type,orders.is_oversold,promotion_details,orders.logistics_company,orders.invoice_no,orders.divide_order_fee,is_sh_ship, orders.store_code,");
-            sbField.append("order_tax_fee, orders.sub_order_tax_fee, orders.bind_oid, orders.consign_time, orders.shipping_type,orders.part_mjz_discount,");
-            sbField.append("service_orders,service_orders.buyer_nick,service_orders.item_oid,service_orders.num,service_orders.price,service_orders.seller_nick,");
-            sbField.append("service_orders.service_id,service_orders.title,service_orders.tmser_spu_code,service_orders.oid,service_orders.payment,service_orders.total_fee");
-            orderSourceRequest.setFields(sbField.toString());
-            orderSourceRequest.setTid(tid);
-
-
-            request.setRequest(orderSourceRequest);
-            request.setMethod("getTradeFullInfoDecrypt");
-
-            return serviceUtil.execute(request);
-        } catch (Exception e) {
-            Logger.error(e.getMessage(), e);
-            return null;
-        }
-    }
+//    //取订单详细信息
+//    private String getTopFullinfo(String token,MCloudRequest request, String tid) {
+//        TradeFullinfoGetRequest req = new TradeFullinfoGetRequest();
+//        
+//        request.setRequest(req);
+//        request.setSession(token);
+//        request.setAccess("3");
+//        
+//        Map<String, Object> maps = new HashMap<String, Object>();
+//        return getTOPOrderFullinfo(request, maps,tid);
+//    }
+//
+//    
+//    public String getTOPOrderFullinfo(MCloudRequest request, Map<String, Object> map,String tid) {
+//
+//        try {
+//            TradeFullinfoGetRequest orderSourceRequest = (TradeFullinfoGetRequest) request.getRequest();
+//            StringBuilder sbField = new StringBuilder();
+//            sbField.append("buyerTaxNO,buyer_nick,coupon_fee,price,pic_path,title,type,created,tid,seller_rate,buyer_flag,buyer_rate,status,payment,adjust_fee,post_fee,total_fee,");
+//            sbField.append("pay_time,end_time,modified,consign_time,buyer_obtain_point_fee,point_fee,real_point_fee,received_payment,commission_fee,");
+//            sbField.append("buyer_memo,seller_memo,alipay_no,alipay_id,buyer_message,num_iid,num,buyer_alipay_no,receiver_name,receiver_state,receiver_city,");
+//            sbField.append("receiver_district,receiver_town,receiver_address,receiver_zip,receiver_mobile,receiver_phone,seller_flag,available_confirm_fee,has_post_fee,");
+//            sbField.append("timeout_action_time,cod_fee,cod_status,shipping_type,trade_memo,is_3D,buyer_email,buyer_area,trade_from,is_lgtype,is_force_wlb,");
+//            sbField.append("is_brand_sale,buyer_cod_fee,discount_fee,seller_cod_fee,express_agency_fee,invoice_name,service_orders, buyer_memo,buyer_flag,is_part_consign,");
+//            sbField.append("orders.refund_status,orders.title,orders.price,orders.num,orders.num_iid,orders.sku_id,orders.status,orders.oid,orders.total_fee,orders.payment,orders.discount_fee,orders.adjust_fee,");
+//            sbField.append("orders.sku_properties_name,orders.item_meal_name,orders.item_meal_id,item_memo,orders.buyer_rate,orders.seller_rate,orders.outer_iid,orders.outer_sku_id,");
+//            sbField.append("orders.refund_id,orders.seller_type,orders.is_oversold,promotion_details,orders.logistics_company,orders.invoice_no,orders.divide_order_fee,is_sh_ship, orders.store_code,");
+//            sbField.append("order_tax_fee, orders.sub_order_tax_fee, orders.bind_oid, orders.consign_time, orders.shipping_type,orders.part_mjz_discount,");
+//            sbField.append("service_orders,service_orders.buyer_nick,service_orders.item_oid,service_orders.num,service_orders.price,service_orders.seller_nick,");
+//            sbField.append("service_orders.service_id,service_orders.title,service_orders.tmser_spu_code,service_orders.oid,service_orders.payment,service_orders.total_fee");
+//            orderSourceRequest.setFields(sbField.toString());
+//            orderSourceRequest.setTid(tid);
+//
+//
+//            request.setRequest(orderSourceRequest);
+//            request.setMethod("getTradeFullInfoDecrypt");
+//
+//            return serviceUtil.execute(request);
+//        } catch (Exception e) {
+//            Logger.error(e.getMessage(), e);
+//            return null;
+//        }
+//    }
 	
 	
 }

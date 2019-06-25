@@ -261,7 +261,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
                         }
                     }
                 	
-                	resultString = downloadmethod.executeDownloadTask(taskList);
+                	//resultString = downloadmethod.executeDownloadTask(taskList);
                     return resultString;
                     
                 } catch (Exception e) {
