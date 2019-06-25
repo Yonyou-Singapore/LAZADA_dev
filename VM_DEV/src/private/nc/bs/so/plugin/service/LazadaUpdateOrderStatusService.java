@@ -205,9 +205,9 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				String updateTimestamp = format.format(new Date());
 				
-				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,iosupdateDate);
+				String retStr = lazadaClientService.getOrderList(url,token ,null, null,false,iosupdateDate);
 
-				Logger.info("璋冪敤鏁版嵁閫氳幏鍙栧師鍗曞垪琛ㄦ帴鍙ｃ�getOrders銆戣繑鍥炴暟鎹" + retStr);
+				Logger.info("获取lazada上次更新后的订单" + retStr);
 				// OrderListResult orderList = processResStr(retStr);
 				LazadaGetOrderListDataResponse lazadaGetOrderListDataResponse = new Gson()
 						.fromJson(retStr, LazadaGetOrderListDataResponse.class);
