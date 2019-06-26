@@ -252,7 +252,8 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
                                 if (null != list) {
                                     MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
-                                    taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
+                                    //taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
+                                    new UpdateTaobaoStatus(token,inRequest, list,orgId,lastModifiedTime).call();
                                 }
                                 if (StringUtils.isNotBlank(response.getErrorCode())) {
 //        							//刷新token
@@ -267,7 +268,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
                         }
                     }
                 	
-                	resultString = downloadmethod.executeDownloadTask(taskList);
+                	//resultString = downloadmethod.executeDownloadTask(taskList);
                     return resultString;
                     
                 } catch (Exception e) {
@@ -372,7 +373,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     }
 
     
-    private class InvokeDownload implements Callable<Map<String, Object>> {
+    private class UpdateTaobaoStatus {
     	String token;
     	MCloudRequest inRequest;
     	List<Trade> list;
@@ -380,7 +381,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
     	Date lastModifiedTime;
         
 
-        public InvokeDownload(String token, MCloudRequest inRequest,List<Trade> list,String orgId,Date lastModifiedTime) {
+        public UpdateTaobaoStatus(String token, MCloudRequest inRequest,List<Trade> list,String orgId,Date lastModifiedTime) throws Exception {
         	this.token = token;
         	this.inRequest = inRequest;
             this.list = list;
@@ -389,7 +390,6 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
            
         }
 
-        @Override
         public Map<String, Object> call() throws Exception {
 
             List<Long> tids = new ArrayList<Long>();

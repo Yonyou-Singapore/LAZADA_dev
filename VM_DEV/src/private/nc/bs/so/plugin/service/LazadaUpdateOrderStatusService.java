@@ -219,7 +219,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 							lazadaGetOrderListResponse = lazadaGetOrderListDataResponse
 									.getData();
 						} catch (Exception e) {
-							Logger.error("璋冪敤鏁版嵁閫氳幏鍙栧師鍗曞垪琛ㄦ帴鍙ｃ�getOrders銆戣繑鍥炴暟鎹浆鎹son寮傚父",
+							Logger.error("JSON转换lazada原单失败",
 							e);
 						}
 						if (lazadaGetOrderListResponse != null) {
@@ -234,7 +234,9 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 
 							if (items == null || items.size() == 0)
 								break;
-							taskList.add(new InvokeDownload(items,updateTimestamp));
+							//taskList.add(new InvokeDownload(items,updateTimestamp));
+							
+							new LazadaupdateOrderStatus(items,updateTimestamp).call();
 						}
 					} else {
 						return "鍙栧埌鐨勬暟鎹负绌�";
@@ -243,7 +245,7 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 
 			} while (page < pageMax);
 
-			result = downloadmethod.executeDownloadTask(taskList);
+		//	result = downloadmethod.executeDownloadTask(taskList);
 
 		} catch (Exception e) {
 
@@ -252,19 +254,16 @@ public class LazadaUpdateOrderStatusService extends AbstractWorkPlugin {
 		return result;
 	}
 
-	private class InvokeDownload implements Callable<Map<String, Object>> {
+	private class LazadaupdateOrderStatus {
 		
 		List<LazadaGetOrderDetailResponse> itemsList;
 		String updateTimestamp;
-
-		public InvokeDownload(List<LazadaGetOrderDetailResponse> itemsList,String updateTimestamp)
-				throws Exception {
 		
+		public LazadaupdateOrderStatus(List<LazadaGetOrderDetailResponse> itemsList,String updateTimestamp)throws Exception{
 			this.itemsList = itemsList;
 			this.updateTimestamp = updateTimestamp;
 		}
 
-		@Override
 		public Map<String, Object> call() throws Exception {
 
 			Map<String, Object> newmap = new HashMap<String, Object>();

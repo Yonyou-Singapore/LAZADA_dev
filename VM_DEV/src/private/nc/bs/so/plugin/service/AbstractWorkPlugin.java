@@ -162,6 +162,8 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		} catch (DAOException e) {
 			ExceptionUtils.wrapException(e);
 		}
+		
+		
 		return executeQuery;
 	}
 	

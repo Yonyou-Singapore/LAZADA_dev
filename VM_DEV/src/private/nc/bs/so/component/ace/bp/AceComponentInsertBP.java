@@ -18,7 +18,6 @@ public class AceComponentInsertBP {
 		this.addBeforeRule(bp.getAroundProcesser());
 		this.addAfterRule(bp.getAroundProcesser());
 		return bp.insert(bills);
-
 	}
 
 	/**
