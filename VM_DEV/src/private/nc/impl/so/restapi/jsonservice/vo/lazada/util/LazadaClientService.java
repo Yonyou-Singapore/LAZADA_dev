@@ -26,7 +26,7 @@ public class LazadaClientService {
 	 * @param endTime
 	 * @return
 	 */
-	public String getOrderList(String url, String accessToken, String startTime,String endTime,Boolean isReadytoShip,String updateDate) {
+	public String getOrderList(String url, String accessToken, String startTime,String endTime,Boolean isReadytoShip,String updateDate,String offset) {
 		
 		
 		try{
@@ -47,7 +47,7 @@ public class LazadaClientService {
 			if(isReadytoShip){
 				request.addApiParameter("status", "ready_to_ship");
 			}
-			request.addApiParameter("offset", "0");
+			request.addApiParameter("offset", offset);
 			request.addApiParameter("limit", "100");
 
 			LazopResponse response;

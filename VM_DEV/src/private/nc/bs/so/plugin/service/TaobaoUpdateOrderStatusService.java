@@ -75,6 +75,10 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 		String result = "";
 		
 
+		List<String> timelist = new ArrayList<String>();
+		//获取数据库中taobao订单最后修改时间
+		timelist = queryTaobaoOrderLastUpdateTime();
+		
 		try {
 			//当前数据源为VM
 			Logger.error("===before init lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
@@ -91,7 +95,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 				String token = sysVO.getValue();
 				String orgId = sysVO.getInitcode();
 			
-				getUpdatedRange(token,orgId);
+				getUpdatedRange(token,orgId,timelist);
 				//result = procOrders(token,orgId);
 
 				
@@ -138,7 +142,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 	 * @param service
 	 * @return
 	 */
-	private String getUpdatedRange(String token,String orgId) {
+	private String getUpdatedRange(String token,String orgId,List<String> timelist) {
 		
 		StringBuffer resultString = new StringBuffer();
 //		//排除的状态
@@ -146,9 +150,6 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 //		statusList.add("TRADE_CLOSED_BY_TAOBAO");
 		
 		
-		List<String> timelist = new ArrayList<String>();
-		//鍙栧簱閲岄潰涓婃鏇存柊鐨勬渶鏅氭椂闂�
-		timelist = queryTaobaoOrderLastUpdateTime(orgId);
 		
 		if(!CollectionUtils.isEmpty(timelist)){
 							

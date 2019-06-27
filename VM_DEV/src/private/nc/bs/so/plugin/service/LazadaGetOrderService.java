@@ -140,15 +140,17 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 	private String procOrders(String url,String token,String orgId) {
 
 		LazadaGetOrderListsRequest req = new LazadaGetOrderListsRequest();
-		// long page = 0L;
-		// long pageSize = 100L;
+
 		int page = 0;
-		int pageSize = 50;
+		int pageMax = 1;
+		int pageSize = 100;
+
+		int totalNum = 0;
+		int offset = 0;
+
 
 		String result = "";
 
-		int totalNum = 0;
-		int pageMax = 1;
 		try {
 		
 			
@@ -175,7 +177,7 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 			do {
 				page++;
 
-				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,null);
+				String retStr = lazadaClientService.getOrderList(url,token ,iosstartDate, isoenddate,false,null,String.valueOf(offset));
 
 				Logger.info("调用数据通获取原单列表接口【getOrders】返回数据" + retStr);
 				//保存请求数据
@@ -197,9 +199,11 @@ public class LazadaGetOrderService extends AbstractWorkPlugin {
 						if (lazadaGetOrderListResponse != null) {
 							// 订单总数
 							totalNum = lazadaGetOrderListResponse.getCount();
-							// 总页数
-							pageMax = (totalNum % pageSize == 0 ? totalNum
-									/ pageSize : totalNum / pageSize + 1);
+							// 是否有下页
+							if(totalNum % pageSize == 0){
+								pageMax = pageMax + 1;
+								offset+=100;
+							}
 							// 订单列表
 							List<LazadaGetOrderDetailResponse> items = lazadaGetOrderListResponse
 									.getOrders();

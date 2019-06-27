@@ -152,7 +152,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		return executeQuery;
 	}
 	
-	public List<String> queryLazadaOrderLastUpdateTime(String platform) {
+	public List<String> queryLazadaOrderLastUpdateTime() {
 		List<String> executeQuery = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where platform = 2");
@@ -167,7 +167,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		return executeQuery;
 	}
 	
-	public List<String> queryTaobaoOrderLastUpdateTime(String orgId) {
+	public List<String> queryTaobaoOrderLastUpdateTime() {
 		List<String> executeQuery = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
 		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where platform = 1");

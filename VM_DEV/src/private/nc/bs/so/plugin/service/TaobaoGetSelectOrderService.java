@@ -145,7 +145,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 	
 		List<String> timelist = new ArrayList<String>();
 		//取库中最大的更新时间
-		timelist = queryTaobaoOrderLastUpdateTime(orgId);
+		timelist = queryTaobaoOrderLastUpdateTime();
 		
 		if(!CollectionUtils.isEmpty(timelist) && timelist.get(0) != null){
 							
