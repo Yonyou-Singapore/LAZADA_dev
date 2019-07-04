@@ -84,7 +84,8 @@ public interface ILazadaService {
 	/**
 	 * 生成销售订单
 	 * @param agg
+	 * @return 
 	 * @throws BusinessException
 	 */
-	void generateSalesOrderByOrdercenter(AggSo_ordercenter agg) throws BusinessException;
+	AggSo_ordercenter[] generateSalesOrderByOrdercenter(AggSo_ordercenter agg) throws BusinessException;
 }

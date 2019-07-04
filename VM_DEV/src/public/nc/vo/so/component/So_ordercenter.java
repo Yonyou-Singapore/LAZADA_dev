@@ -301,7 +301,11 @@ public UFDateTime ts;
  * 电商平台
  */
 public String platform;
-    
+
+/**
+ * 是否已经生成订单
+ */
+public UFBoolean isgenerated;
     
 /**
 * 属性 pk_ordercenter的Getter方法.属性名：销售组织主键
@@ -1542,6 +1546,15 @@ public String getPlatform() {
 
 public void setPlatform(String platform) {
 	this.platform = platform;
+}
+
+
+public UFBoolean getIsgenerated() {
+	return isgenerated;
+}
+
+public void setIsgenerated(UFBoolean isgenerated) {
+	this.isgenerated = isgenerated;
 }
 
 /**

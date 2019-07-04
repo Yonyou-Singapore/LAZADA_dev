@@ -1,10 +1,10 @@
 package nc.bs.so.plugin.service;
 
 import java.net.URLConnection;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,24 +17,16 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
 import nc.bs.pub.pa.PreAlertObject;
-
 import nc.bs.pub.taskcenter.BgWorkingContext;
 import nc.impl.so.restapi.jsonservice.vo.lazada.util.DownloadMethod;
 import nc.impl.so.restapi.jsonservice.vo.lazada.util.EnumPlatType;
-
-import nc.impl.so.restapi.jsonservice.vo.lazada.util.LazadaDateUtils;
 import nc.impl.so.restapi.jsonservice.vo.lazada.util.LazadaJsonUtils;
-
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.MCloudRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.OrderSourceRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.ServiceUtil;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoBillTransform;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoClientService;
-
-import com.taobao.api.domain.Order;
-import com.taobao.api.domain.Trade;
-import com.taobao.api.internal.parser.json.JsonConverter;
-import net.sf.json.JSONObject;
+import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradeFullinfoGetRequest;
 import nc.itf.uap.busibean.ISysInitQry;
 import nc.pub.so.apiservice.ILazadaService;
 import nc.vo.pub.BusinessException;
@@ -42,20 +34,16 @@ import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.para.SysInitVO;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.alibaba.fastjson.JSONArray;
-import com.google.gson.Gson;
-import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradeFullinfoGetRequest;
-
-import com.taobao.api.request.TradesSoldGetRequest;
-import com.taobao.api.request.TradesSoldIncrementGetRequest;
+import com.taobao.api.domain.Trade;
+import com.taobao.api.internal.parser.json.JsonConverter;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 
 public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {

@@ -11,6 +11,7 @@ import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.so.component.AggSo_ordercenter;
+import nc.vo.so.component.PlatformStatusAndPara;
 import nc.vo.so.component.So_ordercenter_b;
 
 /**
@@ -39,9 +40,7 @@ public class ReadyToShipAction extends NCAction {
 		if(selectedData == null) {
 			return;
 		}
-		if(!"pending".equals(selectedData.getParentVO().getOrder_status())) {
-//			ExceptionUtils.wrappBusinessException("The order status should be pending.");
-		}
+		
 		List<String> order_item_ids = new ArrayList<String>();;
 		String shipProvider = "";
 		String trackingNo = "";
@@ -54,10 +53,10 @@ public class ReadyToShipAction extends NCAction {
 		String platform = selectedData.getParentVO().getPlatform();
 		String country = selectedData.getParentVO().getBilling_country();
 		if(shipProvider == null) {
-			ExceptionUtils.wrappBusinessException("Ship provider is blank.");
+//			ExceptionUtils.wrappBusinessException("Ship provider is blank.");
 		}
 		if(trackingNo == null) {
-			ExceptionUtils.wrappBusinessException("Tracking No. is blank.");
+//			ExceptionUtils.wrappBusinessException("Tracking No. is blank.");
 		}
 		lookup.updateLazadaOrderStatus(order_item_ids.toString(), platform, shipProvider, trackingNo, country);
 		ShowStatusBarMsgUtil.showStatusBarMsg("Ready to ship successful.",
@@ -71,4 +70,15 @@ public class ReadyToShipAction extends NCAction {
 	public void setModel(BillManageModel model) {
 		this.model = model;
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		AggSo_ordercenter selectedData = (AggSo_ordercenter) this.getModel().getSelectedData();
+		if(selectedData != null && 
+				PlatformStatusAndPara.LAZADA_PENDING.equals(selectedData.getParentVO().getOrder_status())) {
+			return true;
+		}
+		return false;
+	}
+	
 }

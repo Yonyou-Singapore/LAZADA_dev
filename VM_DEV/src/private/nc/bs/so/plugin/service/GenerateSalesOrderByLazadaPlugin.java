@@ -211,6 +211,8 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 			bvo.setNqtunitnum(viewvo.getNqtunitnum());
 			bvo.setNastnum(viewvo.getNqtunitnum());//需要处理
 			bvo.setNnum(viewvo.getNqtunitnum());
+			//add by weiningc 发货仓库, 发货组织,版本等处理
+//			bvo.setCsendstockorgid(csendstockorgid);
 			
 			//主表id
 			bvo.setCfirstid(viewvo.getOrderid()); //用于判断是否属于主表
