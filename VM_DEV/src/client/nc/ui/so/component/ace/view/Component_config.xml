@@ -376,6 +376,7 @@
 	<!--======= ¶¯×÷£º[newActions] [ÐÞ¸Ä] ===========-->
 	<bean id="editAction" class="nc.ui.so.component.ace.action.CenterOrderEditAction">
 		<property name="model"><ref bean="bmModel"/></property>
+		<property name="cardForm"><ref bean="billForm"/></property>
 		<property name="interceptor" ref="showCardInterceptor" />
 		<property name="exceptionHandler"><ref bean="exceptionHandler" /></property>
 	</bean>

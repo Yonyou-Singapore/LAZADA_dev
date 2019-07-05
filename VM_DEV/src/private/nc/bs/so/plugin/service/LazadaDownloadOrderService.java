@@ -57,6 +57,7 @@ public class LazadaDownloadOrderService {
 	public static final String COBILLTYPE = "CO01";
 	public static Map<String, String> saleorgcache = null;
 	public static Map<String, String> currencycache = null;
+	public static Map<String, String> saleorgvcache = null;
 
 	public LazadaDownloadOrderService(String url, String token, String orgId,
 			List<LazadaGetOrderDetailResponse> itemsList) throws Exception {
@@ -68,7 +69,7 @@ public class LazadaDownloadOrderService {
 	}
 	
 	private void initSaleorgCache() {
-		if(saleorgcache == null || currencycache == null) {
+		if(saleorgcache == null || currencycache == null || saleorgvcache == null) {
 			saleorgcache = new HashMap<String, String>();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select code, pk_salesorg from org_salesorg");
@@ -81,6 +82,11 @@ public class LazadaDownloadOrderService {
 	        IRowSet rowset2 = util.query("select code, pk_currtype from bd_currtype");
 	        while(rowset2.next()) {
 	        	currencycache.put(rowset2.getString(0), rowset2.getString(1));
+	        }
+	        saleorgvcache = new HashMap<String, String>();
+	        IRowSet rowset3 = util.query("select code, pk_vid from org_salesorg_v");
+	        while(rowset3.next()) {
+	        	saleorgvcache.put(rowset3.getString(0), rowset3.getString(1));
 	        }
 		}
 		
@@ -236,6 +242,10 @@ public class LazadaDownloadOrderService {
 			billitem.setQty(UFDouble.ONE_DBL);
 			
 			billitem.setStatus(VOStatus.NEW);
+			//发货库存组织及版本字段默认值处理  add by weiningc 20190705 start
+			billitem.setCsendstockorgid(this.queryOrgPK(orgId));
+			billitem.setCsendstockorgvid(saleorgvcache.get(orgId));
+			//end
 			billItemList.add(billitem);
 		}
 		
@@ -325,7 +335,7 @@ public class LazadaDownloadOrderService {
 		billvo.setLastupdatetime(lastUpdateTime);
 		
 		billvo.setPk_org(this.queryOrgPK(orgId));
-		billvo.setPk_org_v(this.queryOrgPK(orgId));
+		billvo.setPk_org_v(saleorgvcache.get(orgId));
 		billvo.setPk_group(AppContext.getInstance().getPkGroup());
 		billvo.setRequesturl(url);
 		billvo.setStatus(VOStatus.NEW);
