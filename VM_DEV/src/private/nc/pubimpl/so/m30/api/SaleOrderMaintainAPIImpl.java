@@ -13,6 +13,7 @@ import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
 import nc.itf.bd.material.custmaterial.ICustMaterialQueryService;
 import nc.itf.scmpub.reference.uap.pf.PfServiceScmUtil;
+import nc.itf.uap.busibean.ISysInitQry;
 import nc.md.data.access.NCObject;
 import nc.md.model.MetaDataException;
 import nc.md.persist.framework.MDPersistenceService;
@@ -27,6 +28,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.para.SysInitVO;
 import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.pub.SqlBuilder;
@@ -107,11 +109,18 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 			ExceptionUtils.wrappBusinessException("Lazada原单生成销售订单重复，请检查订单号: " + sb.toString());
 		}
 		//设置必须要有的默认值 购销类型， 税码等等
-		this.setDefaultForLazada(vos);
+		this.setDefaultForLazada(vos); 
 		
 		this.insertBills(vos);
 		// Modified by Ethan on 2018-03-23
 		// 因为SO是一个接一个同步的 所以直接传上去
+		//根据参数确定是否自动审批
+		ISysInitQry lookup = NCLocator.getInstance().lookup(ISysInitQry.class);
+		SysInitVO para = lookup.queryByParaCode(vos[0].getParentVO().getPk_org(), "SO99");
+		if(para != null && "Y".equals(para.getValue())) {
+			PfServiceScmUtil.processBatch(SOConstant.APPROVE,
+		            SOBillType.Order.getCode(), vos, null, null);
+		}
 		return null;
 	}
 	
