@@ -30,7 +30,6 @@ import nc.impl.so.restapi.jsonservice.vo.taobao.util.MCloudRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.OrderSourceRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.ServiceUtil;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoBillTransform;
-import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoClientService;
 
 import com.taobao.api.domain.Order;
 import com.taobao.api.domain.Trade;
@@ -62,7 +61,7 @@ import com.taobao.api.response.TradesSoldGetResponse;
 public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
 	DownloadMethod downloadmethod = new DownloadMethod();
-	TaobaoClientService taobaoClientService = new TaobaoClientService();
+	
 	LazadaJsonUtils lazadaJsonUtil = new LazadaJsonUtils();
 	TaobaoBillTransform taobaoBillTransform = new TaobaoBillTransform();
     private ServiceUtil serviceUtil = new ServiceUtil();
@@ -96,12 +95,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 				String orgId = sysVO.getInitcode();
 			
 				getUpdatedRange(token,orgId,timelist);
-				//result = procOrders(token,orgId);
-
-				
 			}
-//			result = procOrders();
-//			System.out.print(result);
 
 		} catch (Exception e) {
 			ExceptionUtils.wrappBusinessException(e.getMessage());
@@ -145,12 +139,7 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 	private String getUpdatedRange(String token,String orgId,List<String> timelist) {
 		
 		StringBuffer resultString = new StringBuffer();
-//		//排除的状态
-//		List <String> statusList = new ArrayList<String>();		
-//		statusList.add("TRADE_CLOSED_BY_TAOBAO");
-		
-		
-		
+
 		if(!CollectionUtils.isEmpty(timelist)){
 							
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -206,81 +195,94 @@ public class TaobaoUpdateOrderStatusService extends AbstractWorkPlugin {
 
             List<Callable<Map<String, Object>>> taskList = new ArrayList<Callable<Map<String, Object>>>();
             String resultString = "";
-
-
-            do {
+            
+            
+            
+            //获取更新日期0点
+        	Calendar updatecalendar = Calendar.getInstance();
+        	updatecalendar.setTime(updatedDay);
+        	updatecalendar.set(Calendar.HOUR_OF_DAY, 0);
+        	updatecalendar.set(Calendar.MINUTE, 0);
+        	updatecalendar.set(Calendar.SECOND, 0);
+            Date updateStart = updatecalendar.getTime();
+            
+            
+            //获取当前日期0点
+        	Calendar currentcalendar = Calendar.getInstance();
+        	currentcalendar.setTime(new Date());
+        	currentcalendar.set(Calendar.HOUR_OF_DAY, 0);
+        	currentcalendar.set(Calendar.MINUTE, 0);
+        	currentcalendar.set(Calendar.SECOND, 0);
+            Date current = currentcalendar.getTime();
+            
+            Calendar nextCal = Calendar.getInstance();
+            nextCal.setTime(current);
+            nextCal.add(Calendar.DATE, 1);
+        	Date tomorrow = nextCal.getTime();
+            
+            Date searchDay = updateStart;
+        	
+            
+            do{
+           	
+            	Calendar searchDayPlusCal = Calendar.getInstance();
+            	searchDayPlusCal.setTime(searchDay);
+            	searchDayPlusCal.add(Calendar.DATE, 1);
+            	Date searchDayPlus = searchDayPlusCal.getTime();
             	
-            	//获取当天0点
-            	Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-                Date today = calendar.getTime();
-            	
-                //获取明天0点
-            	
-            	Calendar tomorrowCal = Calendar.getInstance();
-            	tomorrowCal.setTime(today);
-            	tomorrowCal.set(Calendar.DATE, tomorrowCal.get(Calendar.DATE) + 1);
-            	Date tomorrow = tomorrowCal.getTime();
-               
-        
-                page++;
-                req.setPageNo(page);
-                req.setPageSize(pageSize);
-                mcloudRequest.setRequest(req);
-                Map<String, Object> map = new HashMap<String, Object>();
-               
-                String fullInfoRet = "";
-                try {
-                	
-                	retStr = getOrderinfolist(token,mcloudRequest, map,today,tomorrow,lastModifiedTime);
-                    Logger.info("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据" + retStr);
-                	TradesSoldGetResponse response = null;
-                	
-                	
-                	if (StringUtils.isNotEmpty(retStr)) {
-                        if (retStr.length() != 0) {
-                            try {
-                                response = (TradesSoldGetResponse) trans2Obj(retStr, TradesSoldGetResponse.class);
-                            } catch (Exception e) {
-                                Logger.error("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据转换json异常", e);
-                            }
-                            if (response != null && null != response.getHasNext()) {
-                                hasNext = response.getHasNext();
-                                List<Trade> list = response.getTrades();
-
-                                if (null != list) {
-                                    MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
-                                    //taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
-                                    new UpdateTaobaoStatus(token,inRequest, list,orgId,lastModifiedTime).call();
+            	do {      	
+                    page++;
+                    req.setPageNo(page);
+                    req.setPageSize(pageSize);
+                    mcloudRequest.setRequest(req);
+                    Map<String, Object> map = new HashMap<String, Object>();
+                   
+                    String fullInfoRet = "";
+                    try {
+                    	
+                    	retStr = getOrderinfolist(token,mcloudRequest, map,searchDay,searchDayPlus,lastModifiedTime);
+                        Logger.info("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据" + retStr);
+                    	TradesSoldGetResponse response = null;
+                    	
+                    	
+                    	if (StringUtils.isNotEmpty(retStr)) {
+                            if (retStr.length() != 0) {
+                                try {
+                                    response = (TradesSoldGetResponse) trans2Obj(retStr, TradesSoldGetResponse.class);
+                                } catch (Exception e) {
+                                    Logger.error("调用淘宝接口 getTaobaoTradesSoldIncrement 返回数据转换json异常", e);
                                 }
-                                if (StringUtils.isNotBlank(response.getErrorCode())) {
-//        							//刷新token
-//        							getRefreshToken.getRefreshToken(request,shop,retStr,info);
-//        							result="";
-//        							// 下载错误日志
-                                }
+                                if (response != null && null != response.getHasNext()) {
+                                    hasNext = response.getHasNext();
+                                    List<Trade> list = response.getTrades();
 
-                            } else {
-//        						
+                                    if (null != list) {
+                                        MCloudRequest inRequest = new MCloudRequest(String.valueOf(EnumPlatType.top.toString()));
+                                        //taskList.add(new InvokeDownload(token,inRequest, list,orgId,lastModifiedTime));
+                                        new UpdateTaobaoStatus(token,inRequest, list,orgId,lastModifiedTime).call();
+                                    }
+                                    if (StringUtils.isNotBlank(response.getErrorCode())) {
+//            							
+                                    }
+
+                                } else {
+//            						
+                                }
                             }
                         }
-                    }
-                	
-                	//resultString = downloadmethod.executeDownloadTask(taskList);
-                    return resultString;
-                    
-                } catch (Exception e) {
-                    Logger.error(e.getMessage(), e);
-                    return null;
-                }
-                
-                
-           } while (hasNext);
-            
-            
+
+                    } catch (Exception e) {
+                        Logger.error(e.getMessage(), e);
+                        return null;
+                    }      
+	                    
+	               } while (hasNext);
+            	
+            	 searchDay = searchDayPlus;
+            	 
+            }while(searchDay.before(tomorrow));
+            return resultString;
+   
         } finally {
         	
         }

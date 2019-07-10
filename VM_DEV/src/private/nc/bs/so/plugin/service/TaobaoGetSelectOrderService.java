@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +30,6 @@ import nc.impl.so.restapi.jsonservice.vo.taobao.util.MCloudRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.OrderSourceRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.ServiceUtil;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoBillTransform;
-import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoClientService;
 
 import com.taobao.api.domain.Order;
 import com.taobao.api.domain.Trade;
@@ -55,13 +55,11 @@ import com.taobao.api.request.TradesSoldIncrementGetRequest;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradesSoldGetResponse;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 
 public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 
 	DownloadMethod downloadmethod = new DownloadMethod();
-	TaobaoClientService taobaoClientService = new TaobaoClientService();
+	
 	LazadaJsonUtils lazadaJsonUtil = new LazadaJsonUtils();
 	TaobaoBillTransform taobaoBillTransform = new TaobaoBillTransform();
     private ServiceUtil serviceUtil = new ServiceUtil();
@@ -247,10 +245,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
                                     //end
                                 }
                                 if (StringUtils.isNotBlank(response.getErrorCode())) {
-//        							//刷新token
-//        							getRefreshToken.getRefreshToken(request,shop,retStr,info);
-//        							result="";
-//        							// 下载错误日志
+//        						
                                 }
 
                             } else {

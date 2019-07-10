@@ -2,7 +2,7 @@ package nc.impl.so.restapi.jsonservice.vo.taobao.util;
 
 public class MCloudRequest {
 	/**
-	 * 鎵�睘骞冲彴
+	 * 所属平台
 	 */
 	private String plat;
 	
@@ -13,7 +13,7 @@ public class MCloudRequest {
 	private String session;
 
 	private String appId;
-	private String clientId;//鑱氱編鍟嗗id
+	private String clientId;//聚美商家id
 	
 	private String isRds = "false";
 
@@ -26,19 +26,19 @@ public class MCloudRequest {
 	}
 
 	/**
-	 * 鏁版嵁閫氭帴鍙ｆ柟娉曞悕
+	 * 数据通接口方法名
 	 */
 	private String method;
 	/**
-	 * 鍙傛暟鏍煎紡 锛坖son 鎴�xml , 榛樿json锛�
+	 * 参数格式 （json 或 xml , 默认json）
 	 */
 	private String format = "json";
 	/**
-	 * 璁块棶鏍囪瘑 锛堟湇鍔″晢鎺ュ彛璋冪敤锛�锛�鍟嗗鑷爺鎺ュ彛璋冪敤锛�锛�
+	 * 访问标识 （服务商接口调用：1； 商家自研接口调用：2）
 	 */
 	private String access;
 	/**
-	 * 璇锋眰搴旂敤鍙傛暟
+	 * 请求应用参数
 	 */
 	private Object request;
 

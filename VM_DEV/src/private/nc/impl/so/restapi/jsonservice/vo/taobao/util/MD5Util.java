@@ -3,7 +3,7 @@ package nc.impl.so.restapi.jsonservice.vo.taobao.util;
 import java.security.MessageDigest;
 
 /**
- * @description 1MD5鍔犲瘑绫�
+ * @description 1MD5加密类
  * @author zhangwd
  * @date 2012-5-24
  * 
@@ -11,15 +11,15 @@ import java.security.MessageDigest;
 public class MD5Util {
 
 	/**
-	 * MD5绠楁硶
+	 * MD5算法
 	 */
 	private static final String ALGORITHM_MD5 = "MD5";
 
 	/**
-	 * 鏂扮殑md5绛惧悕锛岄灏炬斁secret銆�
+	 * 新的md5签名，首尾放secret。
 	 * 
 	 * @param data
-	 *            浼犵粰鏈嶅姟鍣ㄧ殑鍙傛暟
+	 *            传给服务器的参数
 	 *
 	 */
 	public static String md5(String data) {
@@ -47,7 +47,7 @@ public class MD5Util {
 	}
 
 	/**
-	 * 浜岃繘鍒惰浆瀛楃涓�
+	 * 二进制转字符串
 	 */
 	private static String byte2hex(byte[] b) {
 		StringBuffer hs = new StringBuffer();

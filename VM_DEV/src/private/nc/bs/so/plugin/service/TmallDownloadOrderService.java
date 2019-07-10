@@ -20,7 +20,6 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.util.LazadaJsonUtils;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.MCloudRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.ServiceUtil;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoBillTransform;
-import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoClientService;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TradeFullinfoGetRequest;
 import nc.pub.so.apiservice.ILazadaService;
 import nc.vo.pub.BusinessException;
@@ -51,7 +50,7 @@ import com.taobao.api.response.TradeFullinfoGetResponse;
  */
 public class TmallDownloadOrderService {
 	DownloadMethod downloadmethod = new DownloadMethod();
-	TaobaoClientService taobaoClientService = new TaobaoClientService();
+	
 	LazadaJsonUtils lazadaJsonUtil = new LazadaJsonUtils();
 	TaobaoBillTransform taobaoBillTransform = new TaobaoBillTransform();
 	String token;

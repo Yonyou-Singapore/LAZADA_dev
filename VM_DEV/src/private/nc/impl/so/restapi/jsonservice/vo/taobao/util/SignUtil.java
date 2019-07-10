@@ -61,9 +61,9 @@ public class SignUtil {
     }
 
     /**
-     *瀵瑰叆鍙傝繘琛屾帓搴忓姞瀵�
+     *对入参进行排序加密
      * @param secret
-     * @param cloudRequestParam 鎵�湁鍙傛暟
+     * @param cloudRequestParam 所有参数
      * @return
      */
     public static String sign(String secret, Map<String,String> cloudRequestParam) {
@@ -90,7 +90,7 @@ public class SignUtil {
     }
 
     /**
-     *2.1鍙婁互涓婄増鏈鍚�
+     *2.1及以上版本签名
      * @param appKey
      * @param secret
      * @param session
@@ -130,9 +130,9 @@ public class SignUtil {
     }
 
     /**
-     *鏁版嵁閫氱鍚嶈鍒�
-     * @param enting 瀵嗛挜
-     * @param param_json 涓氬姟鍙傛暟
+     *数据通签名规则
+     * @param enting 密钥
+     * @param param_json 业务参数
      * @return
      */
     public static String signForSjt(String enting, String param_json) {
@@ -185,16 +185,16 @@ public class SignUtil {
     }
 
     /**
-     * 鐢熸垚URL鍙傛暟
+     * 生成URL参数
      * @param
-     * @param sign 绛惧悕鏁版嵁
+     * @param sign 签名数据
      * @param timestamp
      * @return
      */
     public static String paramUrl(String appKey, String secret, String session, String method,String timestamp, String format, String v,String sign){
         Map<String,String> pmap = new HashMap<String,String>();
         pmap = publicMap(appKey, secret,session,method, timestamp,format,v);
-        pmap.put("sign",sign); //绛惧悕
+        pmap.put("sign",sign); //签名
         TreeMap treemap = new TreeMap();
         treemap.putAll(pmap);
         StringBuilder sb = new StringBuilder("?");
@@ -214,7 +214,7 @@ public class SignUtil {
     public static String paramUrlWithoutSession(String appKey, String secret, String timestamp, String format, String v,String sign){
         Map<String,String> pmap = new HashMap<String,String>();
         pmap = publicMapWithoutSession(appKey, secret, timestamp,format,v);
-        pmap.put("sign",sign); //绛惧悕
+        pmap.put("sign",sign); //签名
         TreeMap treemap = new TreeMap();
         treemap.putAll(pmap);
         StringBuilder sb = new StringBuilder("?");
@@ -243,7 +243,7 @@ public class SignUtil {
     }
 
     /**
-     * 缁勮map闆嗗悎
+     * 组装map集合
      * @param appKey
      * @param secret
      * @param session
@@ -277,7 +277,7 @@ public class SignUtil {
 
 
     /**
-     * 鐢熸垚鏁板瓧绛惧悕锛屽強URL
+     * 生成数字签名，及URL
      * @param appKey
      * @param secret
      * @param session
@@ -299,7 +299,7 @@ public class SignUtil {
     }
 
     /**
-     * 鐢熸垚鏁板瓧绛惧悕锛屽強URL
+     * 生成数字签名，及URL
      * @param appKey
      * @param secret
      * @param timestamp

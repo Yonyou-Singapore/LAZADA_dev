@@ -28,7 +28,6 @@ import nc.impl.so.restapi.jsonservice.vo.taobao.util.MCloudRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.OrderSourceRequest;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.ServiceUtil;
 import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoBillTransform;
-import nc.impl.so.restapi.jsonservice.vo.taobao.util.TaobaoClientService;
 
 import com.taobao.api.domain.Order;
 import com.taobao.api.domain.Trade;
@@ -58,7 +57,7 @@ import com.taobao.api.response.TradesSoldGetResponse;
 public class TaobaoGetOrderService extends AbstractWorkPlugin {
 
 	DownloadMethod downloadmethod = new DownloadMethod();
-	TaobaoClientService taobaoClientService = new TaobaoClientService();
+	
 	LazadaJsonUtils lazadaJsonUtil = new LazadaJsonUtils();
 	TaobaoBillTransform taobaoBillTransform = new TaobaoBillTransform();
     private ServiceUtil serviceUtil = new ServiceUtil();

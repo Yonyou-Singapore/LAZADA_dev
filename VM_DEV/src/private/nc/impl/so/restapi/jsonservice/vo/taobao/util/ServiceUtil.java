@@ -56,7 +56,7 @@ public class ServiceUtil {
 	Logger logger = LoggerFactory.getLogger(ServiceUtil.class);
 
 	/**
-	 * 璋冪敤鏁版嵁閫氭帴鍙�
+	 * 调用数据通接口
 	 * 
 	 * @param request
 	 * @return
@@ -88,19 +88,19 @@ public class ServiceUtil {
 	}
 
 	private String execute(String paramVal, String url, String appSecret) throws Exception {
-		// 绛惧悕鏍￠獙
+		// 签名校验
 		String sign = SignUtil.signForSjt(appSecret, paramVal);
 
 		HttpPost httpRequest = new HttpPost(url);
-		// Post杩愪綔浼犻�鍙樻暟蹇呴』鐢∟ameValuePair[]
+		// Post运作传送变数必须用NameValuePair[]
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("params", paramVal));
 		params.add(new BasicNameValuePair("sign", sign));
 
-		// 鍙戝嚭HTTP request
+		// 发出HTTP request
 		httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-		// 鍙栧緱HTTP response
-		HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest); // 鎵ц璋冪敤鏁版嵁閫�
+		// 取得HTTP response
+		HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest); // 执行调用数据通
 
 		return EntityUtils.toString(httpResponse.getEntity());
 
@@ -109,13 +109,13 @@ public class ServiceUtil {
 	private String executeData(MCloudRequest request, String url) {
 		try {
 			Gson gson = new Gson();
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 璁剧疆鏃ユ湡鏍煎紡
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 			request.setTimestamp(df.format(new Date()));
 			// String json = JSONObject.toJSONString(request);
 
-			// 鑾峰彇绛惧悕瀵嗛挜
+			// 获取签名密钥
 			// String enting=request.getEnting();
-			// 娓呯┖瀵嗛挜淇℃伅锛屼笉闇�浼犵粰鏁版嵁閫�
+			// 清空密钥信息，不需要传给数据通
 			// request.SetEnting(null);
 			String paramVal = gson.toJson(request);
 			logger.info("调用数据通URL:" + url + " 平台：" + request.getPlat() + " 方法：" + request.getMethod() + " 请求报文:"
@@ -130,7 +130,7 @@ public class ServiceUtil {
 		}
 	}
 
-	/* taobao 瑙ｅ瘑璇锋眰 */
+	/* taobao 解密请求 */
 	public String PostToTopDecrypt(String cAppKey, String session, String paramJson) {
 		String resultStr = "[]";
 		try {
@@ -159,7 +159,7 @@ public class ServiceUtil {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("TOP瑙ｅ瘑鎺ュ彛璋冪敤澶辫触");
+			System.out.println("TOP解密接口调用失败");
 		}
 		return resultStr;
 	}
@@ -192,14 +192,14 @@ public class ServiceUtil {
 //		HttpPost httpRequest =new HttpPost(InterConst.URL);
 		String url = "";// PropertiesUtil.getCommonFileValue("eccloud_inter_test_intf_url");
 		HttpPost httpRequest = new HttpPost(url);
-		// Post杩愪綔浼犻�鍙樻暟蹇呴』鐢∟ameValuePair[]
+		// Post运作传送变数必须用NameValuePair[]
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		params.add(new BasicNameValuePair("params", paramVal));
-		// 鍙戝嚭HTTP request
+		// 发出HTTP request
 		try {
 			httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-			// 鍙栧緱HTTP response
+			// 取得HTTP response
 			HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest);
 
 			String str = EntityUtils.toString(httpResponse.getEntity());
@@ -213,7 +213,7 @@ public class ServiceUtil {
 	}
 
 	/**
-	 * 鑾峰彇token
+	 * 获取token
 	 * 
 	 * @param url
 	 * @param appkey
@@ -232,24 +232,24 @@ public class ServiceUtil {
 		try {
 
 			URL realUrl = new URL(url);
-			// 鎵撳紑鍜孶RL涔嬮棿鐨勮繛鎺�
+			// 打开和URL之间的连接
 			URLConnection conn = realUrl.openConnection();
-			// 璁剧疆閫氱敤鐨勮姹傚睘鎬�
+			// 设置通用的请求属性
 			conn.setRequestProperty("accept", "*/*");
 			conn.setRequestProperty("connection", "Keep-Alive");
 			conn.setRequestProperty("Accept-Charset", "UTF-8");
 			// conn.setRequestProperty("user-agent",
 			// "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-			// 鍙戦�POST璇锋眰蹇呴』璁剧疆濡備笅涓よ
+			// 发送POST请求必须设置如下两行
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
-			// 鑾峰彇URLConnection瀵硅薄瀵瑰簲鐨勮緭鍑烘祦
+			// 获取URLConnection对象对应的输出流
 			out = new PrintWriter(conn.getOutputStream());
-			// 鍙戦�璇锋眰鍙傛暟
+			// 发送请求参数
 			out.print(param);
-			// flush杈撳嚭娴佺殑缂撳啿
+			// flush输出流的缓冲
 			out.flush();
-			// 瀹氫箟BufferedReader杈撳叆娴佹潵璇诲彇URL鐨勫搷搴�
+			// 定义BufferedReader输入流来读取URL的响应
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
 			String line;
 			while ((line = in.readLine()) != null) {
@@ -258,7 +258,7 @@ public class ServiceUtil {
 		} catch (Exception e) {
 			logger.error("发送 POST 请求出现异常！", e);
 		}
-		// 浣跨敤finally鍧楁潵鍏抽棴杈撳嚭娴併�杈撳叆娴�
+		// 使用finally块来关闭输出流、输入流
 		finally {
 			try {
 				if (out != null) {
@@ -280,9 +280,9 @@ public class ServiceUtil {
 		path = "https://118.178.170.255/servlet/BaseHttpServlet";
 		path = "https://openapi.dsclouds.com/servlet/BaseHttpServlet";
 		Gson gson = new Gson();
-		// 鑾峰彇绛惧悕瀵嗛挜
+		// 获取签名密钥
 //		String enting=request.getEnting();
-		// 娓呯┖瀵嗛挜淇℃伅锛屼笉闇�浼犵粰鏁版嵁閫�
+		// 清空密钥信息，不需要传给数据通
 //		request.SetEnting(null);
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("params", request);
@@ -305,20 +305,20 @@ public class ServiceUtil {
 		try {
 			URL url = new URL(path);
 			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-			httpURLConnection.setRequestMethod("POST");// 鎻愪氦妯″紡
-			// conn.setConnectTimeout(10000);//杩炴帴瓒呮椂 鍗曚綅姣
-			// conn.setReadTimeout(2000);//璇诲彇瓒呮椂 鍗曚綅姣
-			// 鍙戦�POST璇锋眰蹇呴』璁剧疆濡備笅涓よ
+			httpURLConnection.setRequestMethod("POST");// 提交模式
+			// conn.setConnectTimeout(10000);//连接超时 单位毫秒
+			// conn.setReadTimeout(2000);//读取超时 单位毫秒
+			// 发送POST请求必须设置如下两行
 			httpURLConnection.setDoOutput(true);
 			httpURLConnection.setDoInput(true);
-			// 鑾峰彇URLConnection瀵硅薄瀵瑰簲鐨勮緭鍑烘祦
+			// 获取URLConnection对象对应的输出流
 			PrintWriter printWriter = new PrintWriter(httpURLConnection.getOutputStream());
-			// 鍙戦�璇锋眰鍙傛暟
+			// 发送请求参数
 //            content = "{\"plat\":\"top\",\"session\":\"6101003f3e3117beZZd99c2134184ce4af581d559eeef871081998929\",\"appId\":\"1\",\"method\":\"getTradeFullInfoDecrypt\",\"format\":\"json\",\"access\":\"1\",\"request\":{\"fields\":\"seller_nick,buyer_nick,title,type,created,sid,tid,seller_rate,buyer_rate,status,payment,discount_fee,adjust_fee,post_fee,total_fee,pay_time,end_time,modified,consign_time,buyer_obtain_point_fee,point_fee,real_point_fee,seller_memo,buyer_message,received_payment,commission_fee,pic_path,num_iid,num,price,cod_fee,cod_status,shipping_type,receiver_name,receiver_state,receiver_city,receiver_district,receiver_address,receiver_zip,receiver_mobile,receiver_phone,orders,invoice_type,invoice_name,invoice_kind,seller_flag,buyer_flag,buyerTaxNO,service_orders\",\"tid\":\"237557988029412689\",\"order\":0}}";
-			printWriter.write(content);// post鐨勫弬鏁�xx=xx&yy=yy
-			// flush杈撳嚭娴佺殑缂撳啿
+			printWriter.write(content);// post的参数 xx=xx&yy=yy
+			// flush输出流的缓冲
 			printWriter.flush();
-			// 寮�鑾峰彇鏁版嵁
+			// 开始获取数据
 			BufferedInputStream bis = new BufferedInputStream(httpURLConnection.getInputStream());
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			int len;
