@@ -76,9 +76,10 @@ public class TmallDownloadOrderService {
 	public static final String COBILLTYPE = "CO01";
 	public static Map<String, String> saleorgcache = null;
 	public static Map<String, String> currencycache = null;
+	public static Map<String, String> saleorgvcache = null;
 
 	private void initSaleorgCache() {
-		if (saleorgcache == null || currencycache == null) {
+		if (saleorgcache == null || currencycache == null || saleorgvcache == null) {
 			saleorgcache = new HashMap<String, String>();
 			StringBuffer sb = new StringBuffer();
 			sb.append("select code, pk_salesorg from org_salesorg");
@@ -93,6 +94,11 @@ public class TmallDownloadOrderService {
 			while (rowset2.next()) {
 				currencycache.put(rowset2.getString(0), rowset2.getString(1));
 			}
+			saleorgvcache = new HashMap<String, String>();
+	        IRowSet rowset3 = util.query("select code, pk_vid from org_salesorg_v");
+	        while(rowset3.next()) {
+	        	saleorgvcache.put(rowset3.getString(0), rowset3.getString(1));
+	        }
 		}
 
 	}
@@ -271,6 +277,10 @@ public class TmallDownloadOrderService {
 			//数量 add by weiningc 
 			billitem.setQty(new UFDouble(order.getNum()));
 			billitem.setStatus(VOStatus.NEW);
+			//发货库存组织及版本字段默认值处理  add by weiningc 20190705 start
+			billitem.setCsendstockorgid(this.queryOrgPK(orgId));
+			billitem.setCsendstockorgvid(saleorgvcache.get(orgId));
+			//end
 			billItemList.add(billitem);
 		}
 		
@@ -374,7 +384,7 @@ public class TmallDownloadOrderService {
 		
 		//单据日期
 		billvo.setPk_org(this.queryOrgPK(orgId));
-		billvo.setPk_org_v(this.queryOrgPK(orgId));
+		billvo.setPk_org_v(saleorgvcache.get(orgId));
 		billvo.setPk_group(AppContext.getInstance().getPkGroup());
 		billvo.setRequesturl(url);
 		billvo.setBilldate(new UFDate(trade.getCreated()));

@@ -210,6 +210,13 @@ public String pk_ordercenter;
 public UFDateTime ts;
     
 public String order_item_id;
+
+//发货仓库
+public String csendstordocid;
+//发货库存组织
+public String csendstockorgvid;
+//发货库存组织最新版本
+public String csendstockorgid;
 /**
 * 属性 pk_ordercenter_b的Getter方法.属性名：销售组织表体主键
 *  创建日期:2019-6-6
@@ -1036,6 +1043,32 @@ return this.pk_ordercenter;
 public void setPk_ordercenter(String pk_ordercenter){
 this.pk_ordercenter=pk_ordercenter;
 } 
+
+
+public String getCsendstordocid() {
+	return csendstordocid;
+}
+
+public void setCsendstordocid(String csendstordocid) {
+	this.csendstordocid = csendstordocid;
+}
+
+public String getCsendstockorgvid() {
+	return csendstockorgvid;
+}
+
+public void setCsendstockorgvid(String csendstockorgvid) {
+	this.csendstockorgvid = csendstockorgvid;
+}
+
+public String getCsendstockorgid() {
+	return csendstockorgid;
+}
+
+public void setCsendstockorgid(String csendstockorgid) {
+	this.csendstockorgid = csendstockorgid;
+}
+
 /**
 * 属性 生成时间戳的Getter方法.属性名：时间戳
 *  创建日期:2019-6-6

@@ -14,7 +14,7 @@ public class OCBillform extends ShowUpableBillForm {
 		super.initUI();
 		this.setShowTotalLine(true);
 		//²»ÐèÒªorgpanel 
-		this.getBillOrgPanel().removeAll();
+//		this.getBillOrgPanel().removeAll();
 		
 	}
 }

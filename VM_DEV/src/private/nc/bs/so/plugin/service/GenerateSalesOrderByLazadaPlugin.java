@@ -157,6 +157,7 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 				hvo = new SaleOrderHVO();
 				//pk_org  主表
 				hvo.setPk_org(viewvo.getPk_org());
+				hvo.setPk_org_v(viewvo.getPk_org_v());
 				//dbilldate
 				hvo.setDbilldate(new UFDate(viewvo.getDbilldate()));
 				//Vtrantypecode
@@ -211,6 +212,11 @@ public class GenerateSalesOrderByLazadaPlugin implements IBackgroundWorkPlugin {
 			bvo.setNqtunitnum(viewvo.getNqtunitnum());
 			bvo.setNastnum(viewvo.getNqtunitnum());//需要处理
 			bvo.setNnum(viewvo.getNqtunitnum());
+			//add by weiningc 发货仓库, 发货组织,版本等处理 start
+			bvo.setCsendstockorgid(viewvo.getCsendstockorgid());
+			bvo.setCsendstockorgvid(viewvo.getCsendstockorgvid());
+			bvo.setCsendstordocid(viewvo.getCsendstordocid());
+			//end
 			
 			//主表id
 			bvo.setCfirstid(viewvo.getOrderid()); //用于判断是否属于主表

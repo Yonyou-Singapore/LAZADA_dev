@@ -33,8 +33,8 @@ public class DownloadOrderAction extends NCAction {
 		dlg.execute();
 		if(dlg.getResult() == UIDialog.ID_OK){
 			String[] codes = dlg.getRefPkorgMethod().getRefCodes();
-			UFDate startdate = dlg.getStartCalendar().getDateBegin();
-			UFDate enddate = dlg.getEndCalendar().getDateEnd();
+			UFDate startdate = new UFDate(dlg.getStartCalendar().getValueObj().toString()).asBegin();
+			UFDate enddate = new UFDate(dlg.getEndCalendar().getValueObj().toString()).asEnd();
 			PlatFormVO[] bodySelectedVOs = (PlatFormVO[]) dlg.getRefPlatform().getTableModel().getBodyValueVOs(PlatFormVO.class.getName());
 			List<String> platvos = new ArrayList<String>();
 			for(PlatFormVO vo : bodySelectedVOs) {

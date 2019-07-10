@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nc.bs.framework.common.NCLocator;
 import nc.bs.ic.pub.util.BillQueryUtils;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.impl.pubapp.pattern.database.DataAccessUtils;
+import nc.itf.bd.material.custmaterial.ICustMaterialQueryService;
 import nc.itf.scmpub.reference.uap.pf.PfServiceScmUtil;
+import nc.itf.uap.busibean.ISysInitQry;
 import nc.md.data.access.NCObject;
 import nc.md.model.MetaDataException;
 import nc.md.persist.framework.MDPersistenceService;
@@ -25,6 +28,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.para.SysInitVO;
 import nc.vo.pubapp.pattern.data.IRowSet;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 import nc.vo.pubapp.pattern.pub.SqlBuilder;
@@ -35,6 +39,8 @@ import nc.vo.so.m30.entity.SaleOrderVO;
 import nc.vo.so.pub.SOConstant;
 import nc.vo.so.pub.util.AggVOUtil;
 import nc.vo.so.restapi.RestMessageVO;
+import nc.vo.uapbd.custmaterial.CustMaterialVO;
+import nc.vo.uapbd.custom.CustomVO;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -103,19 +109,29 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 			ExceptionUtils.wrappBusinessException("Lazada原单生成销售订单重复，请检查订单号: " + sb.toString());
 		}
 		//设置必须要有的默认值 购销类型， 税码等等
-		this.setDefaultForLazada(vos);
+		this.setDefaultForLazada(vos); 
 		
 		this.insertBills(vos);
 		// Modified by Ethan on 2018-03-23
 		// 因为SO是一个接一个同步的 所以直接传上去
+		//根据参数确定是否自动审批
+		ISysInitQry lookup = NCLocator.getInstance().lookup(ISysInitQry.class);
+		SysInitVO para = lookup.queryByParaCode(vos[0].getParentVO().getPk_org(), "SO99");
+		if(para != null && "Y".equals(para.getValue())) {
+			PfServiceScmUtil.processBatch(SOConstant.APPROVE,
+		            SOBillType.Order.getCode(), vos, null, null);
+		}
 		return null;
 	}
 	
     private void setDefaultForLazada(SaleOrderVO[] vos) {
     	Map<String, String> queryHelpSkuPK = this.queryHelpSkuPK(vos);
     	Map<String, String> queryCodeSkuPK = this.querySkuCodePK(vos);
+    	//使用客户物料码-集团 匹配sku	   add by weiningc 20190701 start 
+    	Map<String, String> custmaterials = this.transferSkuByCustomerSku(vos);
+    	//end
     	//sku 匹配
-    	this.setSkuPk(vos, queryHelpSkuPK, queryCodeSkuPK);
+    	this.setSkuPk(vos, custmaterials);
     	//组织匹配
 //    	this.setPk_org(vos);
     	//自定义项
@@ -140,7 +156,37 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 		
 	}
 
-    private void setDef(SaleOrderVO[] vos) { 
+    private Map<String, String> transferSkuByCustomerSku(SaleOrderVO[] vos) {
+		Set<String> ordersku = new HashSet<String>();
+		//key 客户物料码code, value: 物料的PK
+		Map<String, String> custommap = new HashMap<String, String>();
+		for(AggregatedValueObject agg : vos) {
+			CircularlyAccessibleValueObject[] childrenVO = agg.getChildrenVO();
+			for(CircularlyAccessibleValueObject child : childrenVO) {
+				ordersku.add((String)child.getAttributeValue("cmaterialvid"));
+			}
+		}
+		try {
+			SqlBuilder sb = new SqlBuilder();
+			sb.append("code", ordersku.toArray(new String[0]));
+			sb.append(" and dr=0");
+			CustMaterialVO[] custommaterialvos = NCLocator.getInstance().lookup(ICustMaterialQueryService.class)
+				.queryVOsByCondition(sb.toString());
+			if(custommaterialvos != null) {
+				for(CustMaterialVO vo : custommaterialvos) {
+					custommap.put(vo.getCode(), vo.getMaterialid());
+				}
+			}
+			
+		} catch (BusinessException e) {
+			ExceptionUtils.wrappBusinessException(e.getMessage());
+		}
+		return custommap;
+		
+		
+	}
+
+	private void setDef(SaleOrderVO[] vos) { 
     	StringBuffer err = new StringBuffer();
     	Map<String, String> idCOdeMap = new HashMap<String, String>();
     	Set<String> defcodes = new HashSet<String>();
@@ -203,19 +249,13 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
     	}
 	}
 
-	private void setSkuPk(SaleOrderVO[] vos, Map<String, String> queryhelpSkuPK, Map<String, String> queryCodeSkuPK) {
+	private void setSkuPk(SaleOrderVO[] vos, Map<String, String> custmaterials) {
 		StringBuffer error = new StringBuffer();
 		for(SaleOrderVO vo : vos) { 
-	//		//单据号默认
-	//		BillCodeInfo info =
-	//		        BillCodeInfoBuilder.buildBillCodeInfo(SOBillType.Order.getCode(), SaleOrderHVO.VBILLCODE,
-	//		            SaleOrderHVO.PK_GROUP, SaleOrderHVO.PK_ORG, SaleOrderHVO.VTRANTYPECODE);
-	//	    BillCodeUtils util = new BillCodeUtils(info);
-	//	    util.createBillCode(vos); 
 			
 			SaleOrderBVO[] childrenVO = vo.getChildrenVO();
 			for(SaleOrderBVO child : childrenVO) {
-				String skuPK = queryhelpSkuPK.get(child.getCmaterialvid()) == null ? queryCodeSkuPK.get(child.getCmaterialvid()) : queryhelpSkuPK.get(child.getCmaterialvid());
+				String skuPK = custmaterials.get(child.getCmaterialvid());
 				if(StringUtils.isBlank(skuPK)) {
 					error.append("order:" + vo.getParentVO().getVdef2() +" ,sku [" + child.getCmaterialvid() + "], Country:[" + vo.getParentVO().getVdef1() + "]");
 				}
@@ -228,7 +268,7 @@ public class SaleOrderMaintainAPIImpl implements ISaleOrderMaintainAPI {
 			}
 		}
 		if(error.length() > 0) {
-			ExceptionUtils.wrappBusinessException("物料不匹配: " + error.toString()); 
+			ExceptionUtils.wrappBusinessException("客户物料码不匹配, : " + error.toString()); 
 		}
 		
 	}

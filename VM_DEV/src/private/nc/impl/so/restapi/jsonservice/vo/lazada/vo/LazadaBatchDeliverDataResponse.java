@@ -10,8 +10,8 @@ package nc.impl.so.restapi.jsonservice.vo.lazada.vo;
 
 public class LazadaBatchDeliverDataResponse {
     private LazadaBatchDeliverResponse data;
-    private String code;
-    private String request_id;
+    private Integer code;
+    private Integer request_id;
 
     public LazadaBatchDeliverResponse getData() {
         return data;
@@ -21,19 +21,19 @@ public class LazadaBatchDeliverDataResponse {
         this.data = data;
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 
-    public String getRequest_id() {
+    public Integer getRequest_id() {
         return request_id;
     }
 
-    public void setRequest_id(String request_id) {
+    public void setRequest_id(Integer request_id) {
         this.request_id = request_id;
     }
 }

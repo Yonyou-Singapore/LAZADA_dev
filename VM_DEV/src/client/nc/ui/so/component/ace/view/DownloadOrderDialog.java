@@ -141,8 +141,10 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 	public UIRefPane getStartCalendar() {
 		if (startdatepanel == null) {
 			startdatepanel = new UIRefPane(IRefConst.REFNODENAME_CALENDAR);
-//			startdatepanel.setPK(WorkbenchEnvironment.getInstance()
-//					.getBusiDate().toLocalString());
+			startdatepanel.setPK(WorkbenchEnvironment.getInstance()
+					.getBusiDate().toString());
+			startdatepanel.setValue(WorkbenchEnvironment.getInstance()
+					.getBusiDate().toString());
 			startdatepanel.setPreferredSize(new Dimension(110, 50));
 			startdatepanel.getUITextField().setShowMustInputHint(true);
 		}
@@ -152,8 +154,10 @@ public class DownloadOrderDialog extends JOKCancelDialog {
 	public UIRefPane getEndCalendar() {
 		if (enddatepanel == null) {
 			enddatepanel = new UIRefPane(IRefConst.REFNODENAME_CALENDAR);
-//			enddatepanel.setPK(WorkbenchEnvironment.getInstance().getBusiDate()
-//					.toLocalString());
+			enddatepanel.setPK(WorkbenchEnvironment.getInstance().getBusiDate()
+					.toString());
+			enddatepanel.setValue(WorkbenchEnvironment.getInstance()
+					.getBusiDate().toString());
 			enddatepanel.setPreferredSize(new Dimension(110, 50));
 			enddatepanel.getUITextField().setShowMustInputHint(true);
 		}

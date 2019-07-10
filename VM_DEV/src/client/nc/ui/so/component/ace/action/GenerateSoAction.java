@@ -1,9 +1,7 @@
 package nc.ui.so.component.ace.action;
 
 import java.awt.event.ActionEvent;
-
-import org.apache.commons.lang.StringUtils;
-import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Arrays;
+import java.util.Arrays;
 
 import nc.bs.framework.common.NCLocator;
 import nc.pub.so.apiservice.ILazadaService;
@@ -13,6 +11,8 @@ import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.so.component.AggSo_ordercenter;
 import nc.vo.so.component.PlatformStatusAndPara;
+
+import org.apache.commons.lang.StringUtils;
 
 public class GenerateSoAction extends NCAction {
 	private static final long serialVersionUID = 1L;
@@ -32,7 +32,8 @@ public class GenerateSoAction extends NCAction {
 		this.verifyOrderStatus(selectedData);
 		//生成销售订单
 		ILazadaService lookup = NCLocator.getInstance().lookup(ILazadaService.class);
-		lookup.generateSalesOrderByOrdercenter(selectedData);
+		AggSo_ordercenter[] updatedagg = lookup.generateSalesOrderByOrdercenter(selectedData);
+		this.model.directlyUpdate(updatedagg);
 		ShowStatusBarMsgUtil.showStatusBarMsg("Generate sales order successful.",
 				getModel().getContext());
 		

@@ -239,7 +239,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 //			result = downloadmethod.executeDownloadTask(taskList);
 
 		} catch (Exception e) {
-
+			ExceptionUtils.wrappBusinessException(e.getMessage());
 			Logger.error(e);
 		}
 		return result;

@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
-import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.ic.pub.util.BillQueryUtils;
 import nc.bs.logging.Logger;
+import nc.bs.so.component.ace.bp.AceComponentUpdateBP;
 import nc.bs.so.plugin.service.LazadaGetOrderService;
 import nc.bs.so.plugin.service.LazadaGetSelectOrderService;
 import nc.bs.so.plugin.service.LazadaReadyToShopService;
@@ -25,7 +23,9 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillItemVO;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaBillVO;
 import nc.pub.so.apiservice.ILazadaService;
 import nc.pubitf.so.m30.api.ISaleOrderMaintainAPI;
+import nc.vo.org.util.CloneUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
@@ -35,6 +35,7 @@ import nc.vo.pubapp.pattern.pub.SqlBuilder;
 import nc.vo.so.component.AggSo_ordercenter;
 import nc.vo.so.component.PlatFormVO;
 import nc.vo.so.component.PlatformStatusAndPara;
+import nc.vo.so.component.So_ordercenter;
 import nc.vo.so.component.So_ordercenter_b;
 import nc.vo.so.m30.entity.SaleOrderBVO;
 import nc.vo.so.m30.entity.SaleOrderHVO;
@@ -178,21 +179,40 @@ public class LazadaServiceImpl implements ILazadaService {
 	}
 
 	@Override
-	public void generateSalesOrderByOrdercenter(AggSo_ordercenter agg)
+	public AggSo_ordercenter[] generateSalesOrderByOrdercenter(AggSo_ordercenter agg)
 			throws BusinessException {
 		//组装成SO
 		SaleOrderVO[] vos = this.constructSalesOrder(agg);
 		//调用接口 生成销售订单
 	    ISaleOrderMaintainAPI lookup = NCLocator.getInstance().lookup(ISaleOrderMaintainAPI.class);
 	    try {
+	    	//生成销售订单
 	    	lookup.syncSaleOrders(vos);
+	    	//更新为已生成
+	    	return this.updateCenterOrderStatus(agg);
 		} catch (Exception e) {
 			Logger.error("===generate salesorder error===" + e.getMessage());
 			ExceptionUtils.wrappException(e);
 		}
+		return null;
 		
 	}
 	
+	/**
+	 * 更新状态至已生成
+	 * @param agg
+	 * @return 
+	 */
+	private AggSo_ordercenter[] updateCenterOrderStatus(AggSo_ordercenter agg) {
+		AggSo_ordercenter srcagg = (AggSo_ordercenter) CloneUtil.deepClone(agg);
+		So_ordercenter parentVO = agg.getParentVO();
+		parentVO.setIsgenerated(UFBoolean.TRUE);
+		parentVO.setStatus(VOStatus.UPDATED);
+		AceComponentUpdateBP updatebp = new AceComponentUpdateBP();
+		AggSo_ordercenter[] updtedagg = updatebp.update(new AggSo_ordercenter[] {agg}, new AggSo_ordercenter[]{srcagg});
+		return updtedagg;
+	}
+
 	/**
 	 * 
 	 * @param agg
@@ -234,6 +254,11 @@ public class LazadaServiceImpl implements ILazadaService {
 			bvo.setNqtunitnum(child.getQty());
 			bvo.setNastnum(child.getQty());//需要处理
 			bvo.setNnum(child.getQty());
+			//add by weiningc 发货仓库, 发货组织,版本等处理 start
+			bvo.setCsendstockorgid(child.getCsendstockorgid());
+			bvo.setCsendstockorgvid(child.getCsendstockorgvid());
+			bvo.setCsendstordocid(child.getCsendstordocid());
+			//end
 			
 			//主表id
 			bvo.setCfirstid(child.getOrder_id()); //用于判断是否属于主表
@@ -310,5 +335,14 @@ public class LazadaServiceImpl implements ILazadaService {
 			return UFBoolean.TRUE;
 		}
 		return UFBoolean.FALSE;
+	}
+
+	@Override
+	public AggSo_ordercenter updateLazadaOrderStatus(AggSo_ordercenter agg) {
+		LazadaReadyToShopService lazadaservice = new LazadaReadyToShopService();
+		//BgWorkingContext bgwc = new BgWorkingContext();
+		//lazadaservice.executeTask(null);
+		return lazadaservice.execute(agg);
+		
 	}
 }
