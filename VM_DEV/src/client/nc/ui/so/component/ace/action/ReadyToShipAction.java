@@ -41,24 +41,25 @@ public class ReadyToShipAction extends NCAction {
 			return;
 		}
 		
-		List<String> order_item_ids = new ArrayList<String>();;
-		String shipProvider = "";
-		String trackingNo = "";
-		So_ordercenter_b [] bvos = selectedData.getChildrenVO();
-		for(So_ordercenter_b vo : bvos) {
-			order_item_ids.add(vo.getOrder_item_id());
-			shipProvider = vo.getShipment_provider();
-			trackingNo = vo.getTracking_code();
-		}
-		String platform = selectedData.getParentVO().getPlatform();
-		String country = selectedData.getParentVO().getBilling_country();
-		if(shipProvider == null) {
-//			ExceptionUtils.wrappBusinessException("Ship provider is blank.");
-		}
-		if(trackingNo == null) {
-//			ExceptionUtils.wrappBusinessException("Tracking No. is blank.");
-		}
-		lookup.updateLazadaOrderStatus(order_item_ids.toString(), platform, shipProvider, trackingNo, country);
+//		List<String> order_item_ids = new ArrayList<String>();;
+//		String shipProvider = "";
+//		String trackingNo = "";
+//		So_ordercenter_b [] bvos = selectedData.getChildrenVO();
+//		for(So_ordercenter_b vo : bvos) {
+//			order_item_ids.add(vo.getOrder_item_id());
+//			shipProvider = vo.getShipment_provider();
+//			trackingNo = vo.getTracking_code();
+//		}
+//		String platform = selectedData.getParentVO().getPlatform();
+//		String country = selectedData.getParentVO().getBilling_country();
+//		if(shipProvider == null) {
+////			ExceptionUtils.wrappBusinessException("Ship provider is blank.");
+//		}
+//		if(trackingNo == null) {
+////			ExceptionUtils.wrappBusinessException("Tracking No. is blank.");
+//		}
+		AggSo_ordercenter updatedagg = lookup.updateLazadaOrderStatus(selectedData);
+		this.model.directlyUpdate(updatedagg);
 		ShowStatusBarMsgUtil.showStatusBarMsg("Ready to ship successful.",
 				getModel().getContext());
 	}

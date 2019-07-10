@@ -88,4 +88,6 @@ public interface ILazadaService {
 	 * @throws BusinessException
 	 */
 	AggSo_ordercenter[] generateSalesOrderByOrdercenter(AggSo_ordercenter agg) throws BusinessException;
+
+	AggSo_ordercenter updateLazadaOrderStatus(AggSo_ordercenter selectedData);
 }

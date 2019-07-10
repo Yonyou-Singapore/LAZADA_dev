@@ -62,7 +62,7 @@ public class CenterOrderEditAction extends EditAction {
 				PlatformStatusAndPara.LAZADA_PENDING.equals(selectedData.getParentVO().getOrder_status())) {
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public ShowUpableBillForm getCardForm() {

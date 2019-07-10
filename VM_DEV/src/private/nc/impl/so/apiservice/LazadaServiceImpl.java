@@ -335,4 +335,13 @@ public class LazadaServiceImpl implements ILazadaService {
 		}
 		return UFBoolean.FALSE;
 	}
+
+	@Override
+	public AggSo_ordercenter updateLazadaOrderStatus(AggSo_ordercenter agg) {
+		LazadaReadyToShopService lazadaservice = new LazadaReadyToShopService();
+		//BgWorkingContext bgwc = new BgWorkingContext();
+		//lazadaservice.executeTask(null);
+		return lazadaservice.execute(agg);
+		
+	}
 }

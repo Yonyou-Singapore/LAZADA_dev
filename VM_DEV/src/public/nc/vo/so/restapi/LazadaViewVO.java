@@ -40,6 +40,11 @@ public class LazadaViewVO extends SuperVO {
 	private String shipment_provider;
 	private String tracking_code;
 	
+	private String pk_org_v;
+	private String csendstockorgid;
+	private String csendstockorgvid;
+	private String csendstordocid;
+	
 	public String getPk_org() {
 		return pk_org;
 	}
@@ -216,6 +221,40 @@ public class LazadaViewVO extends SuperVO {
 	public void setBlargessflag(UFBoolean blargessflag) {
 		this.blargessflag = blargessflag;
 	}
+	
+	
+
+	public String getPk_org_v() {
+		return pk_org_v;
+	}
+
+	public void setPk_org_v(String pk_org_v) {
+		this.pk_org_v = pk_org_v;
+	}
+
+	public String getCsendstockorgid() {
+		return csendstockorgid;
+	}
+
+	public void setCsendstockorgid(String csendstockorgid) {
+		this.csendstockorgid = csendstockorgid;
+	}
+
+	public String getCsendstockorgvid() {
+		return csendstockorgvid;
+	}
+
+	public void setCsendstockorgvid(String csendstockorgvid) {
+		this.csendstockorgvid = csendstockorgvid;
+	}
+
+	public String getCsendstordocid() {
+		return csendstordocid;
+	}
+
+	public void setCsendstordocid(String csendstordocid) {
+		this.csendstordocid = csendstordocid;
+	}
 
 	@Override
 	public String getTableName() {
@@ -242,7 +281,11 @@ public class LazadaViewVO extends SuperVO {
        " b.shipment_provider shipment_provider," + 
       " b.tracking_code tracking_code," + 
        " b.voucher_seller norigdiscount/*уш©ш╤Н*/," +
-      " h.gift_option blargessflag" +
+      " h.gift_option blargessflag," +
+       " h.pk_org_v," +
+      "b.csendstockorgid," +
+       "b.csendstockorgvid," +
+      "b.csendstordocid" +
   " from DATA_LAZADA_BILLITEM b" + 
  " inner join DATA_LAZADA_BILL h" + 
     " on h.order_id = b.order_id" + 

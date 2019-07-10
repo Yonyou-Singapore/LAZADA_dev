@@ -157,7 +157,9 @@ public class LazadaDownloadOrderService {
 			}
 		}
 		AceComponentInsertBP bp = new AceComponentInsertBP();
-		bp.insert(aggs.toArray(new AggSo_ordercenter[0]));
+		if(aggs != null && aggs.size() > 0) {
+			bp.insert(aggs.toArray(new AggSo_ordercenter[0]));
+		}
 //		JSONArray toJSON = lazadaJsonUtil.convertJSON(lazadaGetOrderDetaillist);		
 //		newmap.put("result", toJSON);
 		
