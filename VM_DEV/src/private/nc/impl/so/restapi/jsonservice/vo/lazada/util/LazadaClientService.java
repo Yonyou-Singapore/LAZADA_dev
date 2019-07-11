@@ -9,6 +9,7 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.api.LazopResponse;
 
 import nc.bs.logging.Logger;
+import nc.vo.ecpubapp.pattern.exception.ExceptionUtils;
 
 public class LazadaClientService {
 	
@@ -213,9 +214,9 @@ public class LazadaClientService {
 	 * @param
 	 * @throws Exception
 	 */
-	public static void refreshAccessToken() {
+	public String refreshAccessToken(String token,String refreshToken) {
 		
-		LazopClient lazopClient = new LazopClient("https://auth.lazada.com/rest","107215","RF7ooIEg8KJOSjI0v4PXMUDvQgWc62w6");
+		LazopClient lazopClient = new LazopClient("https://auth.lazada.com/rest",key,serviceSecret);
 		LazopRequest lazaopRequest = new LazopRequest();
 		lazaopRequest.setTimestamp(new Date().getTime());
 		lazaopRequest.setHttpMethod("POST");
@@ -224,17 +225,18 @@ public class LazadaClientService {
 	
 	    //{"access_token":"500003016280zbdjxcvSDYjaq3OywCIHxgaEQxBD1975eac93mvQgvRy9L4W2E","country":"sg","refresh_token":"50001301e28qwEccx6oVUendKgZktSmGa8TPAOqW1ac48a42wPtX1gReaAxUpQ","account_platform":"seller_center","refresh_expires_in":2592000,"country_user_info":[{"country":"sg","user_id":"100095623","seller_id":"100073425","short_code":"SG1XO2KP"}],"expires_in":604800,"account":"jimluo@newstead.com.sg","code":"0","request_id":"0b86d54a15432265595433188"}
 
-		lazaopRequest.addApiParameter("refresh_token", "50001301e28qwEccx6oVUendKgZktSmGa8TPAOqW1ac48a42wPtX1gReaAxUpQ");
+		lazaopRequest.addApiParameter("refresh_token", refreshToken);
 		
 //		lazaopRequest.addApiParameter("uuid", "38284839234"); 
 		LazopResponse lazopResponse = null;
 		try {
 			lazopResponse = lazopClient.execute(lazaopRequest);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			ExceptionUtils.wrappBusinessException("Ë¢ÐÂtokenÊ§°Ü"+e.getMessage());
 			e.printStackTrace();
 		}
 		System.out.println(lazopResponse.getBody());
+		return lazopResponse.getBody();
 		
 	}
 	
