@@ -277,11 +277,11 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 					//若返回有异常信息, 直接抛错
 					if(StringUtils.indexOf(retStr, "message") > 0) {
 						throw new BusinessException(retStr);
-					} else if(StringUtils.indexOf(retStr, "message") < 0 && StringUtils.indexOf(retStr, "order_item_id") < 0) {
+					} else if(StringUtils.indexOf(retStr, "message") < 0 && StringUtils.indexOf(retStr, "order_item_id") > 0) {
 						//发货成功 
 						return retStr;
 					}
-	                LazadaBatchDeliverDataResponse lazadaBatchDeliverDataResponse = new Gson().fromJson(retStr, LazadaBatchDeliverDataResponse.class);
+//	                LazadaBatchDeliverDataResponse lazadaBatchDeliverDataResponse = new Gson().fromJson(retStr, LazadaBatchDeliverDataResponse.class);
 //	                lazadaBatchDeliverResponse = lazadaBatchDeliverDataResponse.getData();
 	            }
 				
@@ -377,6 +377,11 @@ public class LazadaReadyToShopService extends AbstractWorkPlugin {
 				
 				if(orgId.equals(orgmap.get(pk_org))) {
 					result = setOrderStatus(url.toString(),token,null,order_item_ids.toString(),shipProvider,trackingNo, country);
+					//test start
+//					result = "{code: 0,data: {order_items: [{order_item_id: 123456,purchase_order_id: 456789,purchase_order_number: ABC-123456},{order_item_id: 123456," +
+//							"purchase_order_id: 456789,purchase_order_number: ABC-123456" +
+//							"}]},request_id: 0ba2887315178178017221014}";
+					//test end
 					//若返回成功,更新
 					if(StringUtils.indexOf(result, "message") < 0 && StringUtils.indexOf(result, "order_item_id") > 0) {
 						return this.updateCenterOrderStatus(agg);

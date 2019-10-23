@@ -86,7 +86,7 @@ public class LazadaGetSelectOrderService extends AbstractWorkPlugin {
 			
 			List<String> timeList = new ArrayList<String>();
 			//取数据库中最新修改时间
-			timeList = queryLazadaOrderLastUpdateTime();
+//			timeList = queryLazadaOrderLastUpdateTime();
 			
 			if(!CollectionUtils.isEmpty(timeList)){
 								

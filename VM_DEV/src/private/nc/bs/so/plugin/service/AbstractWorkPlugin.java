@@ -30,7 +30,7 @@ import nc.vo.sm.UserVO;
 public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	
 	/**
-	 * 閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹
+	 * 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚归柨鐔告灮閹风兘鏁撻弬銈嗗
 	 * @param conn
 	 * @param jsonstr
 	 * @return
@@ -38,14 +38,14 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	abstract String requestSystem(URLConnection conn, String jsonstr);
 	
 	/**
-	 * 閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹json
+	 * 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚归柨鐔告灮閹风兘鏁撻弬銈嗗json
 	 * @param data
 	 * @return
 	 */
 	abstract String constructRequestJson(List<Map<String, Object>> data);
 	
 	/**
-	 * 閿熸枻鎷烽敓鏂ゆ嫹json涓簊upervo
+	 * 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚筳son娑撶皧upervo
 	 * @param response
 	 * @return
 	 */
@@ -69,7 +69,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	public void dbProcessForLazadaStatusUpdate(List<LazadaGetOrderDetailResponse> itemsList,String updateTimestamp) throws DAOException {
 	
 		
-		//閹靛綊鍣洪弴瀛樻煀閻樿埖锟斤拷
+		//闁归潧缍婇崳娲即鐎涙ɑ鐓�闁绘鍩栭敓鏂ゆ嫹
 		List<Map<String,String>> executeQuery = new ArrayList<Map<String,String>>();
 
 		StringBuffer caseString = new StringBuffer();
@@ -94,7 +94,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		
 		try {	
 			int i = dao.executeUpdate(sql.toString());
-			Logger.info("订单状态已更新");
+			Logger.info("璁㈠崟鐘舵�佸凡鏇存柊");
 		} catch (DAOException e) {
 			ExceptionUtils.wrapException(e);
 		}
@@ -104,7 +104,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		public void dbProcessForTaobaoStatusUpdate(Trade trade,String updateTimestamp) throws DAOException {
 	
 		
-		//閹靛綊鍣洪弴瀛樻煀閻樿埖锟斤拷
+		//闁归潧缍婇崳娲即鐎涙ɑ鐓�闁绘鍩栭敓鏂ゆ嫹
 		List<Map<String,String>> executeQuery = new ArrayList<Map<String,String>>();
 
 		StringBuffer caseString = new StringBuffer();
@@ -129,7 +129,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 		
 		try {	
 			int i = dao.executeUpdate(sql.toString());
-			Logger.info("订单状态已更新");
+			Logger.info("璁㈠崟鐘舵�佸凡鏇存柊");
 		} catch (DAOException e) {
 			ExceptionUtils.wrapException(e);
 		}
@@ -170,7 +170,7 @@ public abstract class AbstractWorkPlugin implements IBackgroundWorkPlugin {
 	public List<String> queryTaobaoOrderLastUpdateTime() {
 		List<String> executeQuery = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer();
-		sql.append("select MAX(lastUpdateTime) from DATA_LAZADA_BILL where platform = 1");
+		sql.append("select MAX(created_at) from DATA_LAZADA_BILL where platform = 1");
 		BaseDAO dao = new BaseDAO();
 		try {
 			executeQuery = (List<String>) dao.executeQuery(sql.toString(), new ColumnListProcessor());

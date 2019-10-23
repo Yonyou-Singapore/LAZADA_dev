@@ -1,9 +1,13 @@
 package nc.bs.so.component.ace.bp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import nc.bs.so.component.plugin.bpplugin.ComponentPluginPoint;
 import nc.impl.pubapp.pattern.data.bill.template.InsertBPTemplate;
-import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
 import nc.impl.pubapp.pattern.rule.IRule;
+import nc.impl.pubapp.pattern.rule.processer.AroundProcesser;
 import nc.vo.so.component.AggSo_ordercenter;
 
 /**
@@ -12,7 +16,6 @@ import nc.vo.so.component.AggSo_ordercenter;
 public class AceComponentInsertBP {
 
 	public AggSo_ordercenter[] insert(AggSo_ordercenter[] bills) {
-
 		InsertBPTemplate<AggSo_ordercenter> bp = new InsertBPTemplate<AggSo_ordercenter>(
 				ComponentPluginPoint.INSERT);
 		this.addBeforeRule(bp.getAroundProcesser());

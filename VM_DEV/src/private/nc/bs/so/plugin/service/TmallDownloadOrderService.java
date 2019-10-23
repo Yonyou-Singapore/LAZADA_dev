@@ -45,7 +45,7 @@ import com.taobao.api.response.TradeFullinfoGetResponse;
 
 /**
  * 
- * @author weiningc
+ * 
  * 
  */
 public class TmallDownloadOrderService {
@@ -197,6 +197,9 @@ public class TmallDownloadOrderService {
 		So_ordercenter hvo = this.convertOrdercenterHVO(trade,orgId, url,
 				orders);
 		So_ordercenter_b[] bvos = this.converOrderCenterBVO(trade, orders);
+		if(bvos == null || bvos.length == 0) {
+			bvos = this.converOrderCenterBVO(trade, orders);
+		}
 		agg.setParentVO(hvo);
 		agg.setChildrenVO(bvos);
 		return agg;
@@ -250,7 +253,7 @@ public class TmallDownloadOrderService {
 			
 			Date created_at = trade.getCreated();
 			billitem.setCreated_at(format.format(created_at));
-			billitem.setSku(order.getSkuId());
+			billitem.setSku(order.getOuterSkuId());//修改为商家编码order.getOuterSkuId()
 			billitem.setPurchase_order_id(trade.getTid().toString());
 			//billitem.setPackage_id(product.getPackage_id());
 			billitem.setShipping_type(order.getShippingType());
@@ -259,7 +262,7 @@ public class TmallDownloadOrderService {
 			billitem.setShop_id(trade.getTitle());
 			
 			if(order.getNumIid()!=null){
-				billitem.setShop_sku(order.getNumIid().toString());
+				billitem.setShop_sku(order.getOuterIid());//修改为商家编码order.getOuterIid()
 			}
 			billitem.setInvoice_number(order.getInvoiceNo());
 			//billitem.setIs_digital(product.getIs_digital());

@@ -28,6 +28,7 @@ import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderListResponse;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaGetOrderListsRequest;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaProductsInfo;
 import nc.impl.so.restapi.jsonservice.vo.lazada.vo.LazadaProductsInfoDataResponse;
+import nc.itf.uap.busibean.ISysInit;
 import nc.itf.uap.busibean.ISysInitQry;
 import nc.pub.so.apiservice.ILazadaService;
 import nc.vo.pub.BusinessException;
@@ -55,6 +56,10 @@ public class LazadaRefreshTokenService extends AbstractWorkPlugin {
 	LazadaJsonUtils lazadaJsonUtil = new LazadaJsonUtils();
 	LazadaBillTransform lazadaBillTransform = new LazadaBillTransform();
 	
+	public static final String CN01 = "CN01";
+	public static final String SG = "SG";
+	public static final String CN01_RE = "CN01_RE";
+	public static final String SG_RE = "SG_RE";
 	
 	
 	private ILazadaService lazadaService;
@@ -62,11 +67,11 @@ public class LazadaRefreshTokenService extends AbstractWorkPlugin {
 	@Override
 	public PreAlertObject executeTask(BgWorkingContext arg0)throws BusinessException {
 
-		String result = "";
+		GenerateAccessTokenResponse result = null;
 		
 
 		try {
-			//当前数据源为VM
+			//当前数据源为VM 
 			Logger.error("===before init lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
 			if(InvocationInfoProxy.getInstance().getUserDataSource() == null) {
 				InvocationInfoProxy.getInstance().setUserDataSource("VM");
@@ -74,21 +79,28 @@ public class LazadaRefreshTokenService extends AbstractWorkPlugin {
 			Logger.error("===after init lazada datasource===" + InvocationInfoProxy.getInstance().getUserDataSource());
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			
-			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//开始时间
-			SysInitVO[] sysRefreshTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_REFRESH_TOKEN");//开始时间
+			SysInitVO[] sysTokenlist = NCLocator.getInstance().lookup(ISysInitQry.class).querySysInit(pk_group, "SO_LAZADA_TOKEN");//lazada token
+			SysInitVO[] sysTokenRefreshToken = NCLocator.getInstance().lookup(ISysInitQry.class)
+					.querySysInit(pk_group, "SO_LAZADA_TOKEN_RE");//use by refresh token
 			
+			ISysInit updateparaservice = NCLocator.getInstance().lookup(ISysInit.class);
+			//CN的initcode
 			
-			for(SysInitVO sysVO: sysTokenlist){
+			for(SysInitVO sysrefreshVO: sysTokenRefreshToken){
+				String use_refreshtoken = sysrefreshVO.getValue();
+				String initCode = sysrefreshVO.getInitcode();
+				result = refreshToken(null,use_refreshtoken,initCode);
+				//更新token
+				String refresh_token = result.getRefresh_token();
+				String access_token = result.getAccess_token();
+				if(CN01_RE.equals(initCode) && !StringUtils.isBlank(access_token) && !StringUtils.isBlank(refresh_token)) {
+					updateparaservice.updatePara(CN01, sysrefreshVO.getPk_org(), access_token);
+					updateparaservice.updatePara(CN01_RE, sysrefreshVO.getPk_org(), refresh_token);
+				} else if(SG_RE.equals(initCode) && !StringUtils.isBlank(access_token) && !StringUtils.isBlank(refresh_token)) {
+					updateparaservice.updatePara(SG, sysrefreshVO.getPk_org(), access_token);
+					updateparaservice.updatePara(SG_RE, sysrefreshVO.getPk_org(), refresh_token);
+				}
 				
-				String token = sysVO.getValue();
-				String orgId = sysVO.getInitcode();
-			
-				for(SysInitVO sysrefreshVO: sysRefreshTokenlist){
-					if(sysrefreshVO.getInitcode()==orgId){
-						String refreshToken = sysrefreshVO.getValue();
-						result = refreshToken(token,refreshToken,orgId);
-					}
-				}	
 			}
 //			result = procOrders();
 //			System.out.print(result);
@@ -130,12 +142,12 @@ public class LazadaRefreshTokenService extends AbstractWorkPlugin {
 	 * @param service
 	 * @return
 	 */
-	private String refreshToken(String token,String refreshToken,String orgId) {
+	private GenerateAccessTokenResponse refreshToken(String token,String refreshToken,String initcode) {
 		
 		try {
 		
 			
-			String retStr = lazadaClientService.refreshAccessToken(token,refreshToken);
+			String retStr = lazadaClientService.refreshAccessToken(null,refreshToken);
 
 			Logger.info("调用数据通获取原单列表接口【refreshtoken】返回数据" + retStr);
 			
@@ -143,19 +155,19 @@ public class LazadaRefreshTokenService extends AbstractWorkPlugin {
 						.fromJson(retStr, GenerateAccessTokenResponse.class);
 			
 			//更新参数
-			String newToken = lazadaTokenResponse.getAccess_token();
-			String newRefreshToken = lazadaTokenResponse.getRefresh_token();
+//			String newToken = lazadaTokenResponse.getAccess_token();
+//			String newRefreshToken = lazadaTokenResponse.getRefresh_token();
 			
 			//TODO:根据orgId(SG,CN01) 保存上面两个参数 
 			
 			
-			return retStr;
+			return lazadaTokenResponse;
 
 		} catch (Exception e) {
 
 			Logger.error(e);
 			ExceptionUtils.wrappBusinessException(e.getMessage());
-			return e.getMessage();
+			return null;
 		}
 		
 	}

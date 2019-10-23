@@ -1,8 +1,6 @@
 package nc.ui.so.component.editor.before;
 
 import org.apache.commons.lang.StringUtils;
-import org.restlet.Context;
-
 import nc.ui.ct.editor.listener.IBodyBeforeEditEventListener;
 import nc.ui.ct.util.CardEditorHelper;
 import nc.ui.pubapp.uif2app.event.card.CardBodyBeforeEditEvent;

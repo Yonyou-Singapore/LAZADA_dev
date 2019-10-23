@@ -138,10 +138,10 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 	
 		List<String> timelist = new ArrayList<String>();
 		//取库中最大的更新时间
-		timelist = queryTaobaoOrderLastUpdateTime();
+//		timelist = queryTaobaoOrderLastUpdateTime();
 		
 		if(!CollectionUtils.isEmpty(timelist) && timelist.get(0) != null){
-							
+				
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date updatedDayStart = new Date();
 				
@@ -154,8 +154,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
 							updatedDayStart = lastchangedDay;
 						}
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ExceptionUtils.wrappBusinessException(e.getMessage());
 					}
 				}
 				String result = procOrders(token,orgId,updatedDayStart,enddate.toDate());	
@@ -255,8 +254,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
                     return resultString;
                     
                 } catch (Exception e) {
-                    Logger.error(e.getMessage(), e);
-                    return null;
+                    ExceptionUtils.wrappBusinessException(e.getMessage());
                 }
                 
                 
@@ -266,6 +264,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
         } finally {
         	
         }
+		return retStr;
 	}
 	
 	
@@ -314,7 +313,6 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
             return serviceUtil.execute(request);
         } catch (Exception e) {
         	ExceptionUtils.wrappBusinessException(e.getMessage());
-            Logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -451,8 +449,6 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
             return returnval;
         } catch (Exception e) {
         	ExceptionUtils.wrappBusinessException(e.getMessage());
-            Logger.info("getSourceDetail error:" + e.getMessage());
-            Logger.error(e.getMessage(), e);
             return null;
         }
 
@@ -485,7 +481,7 @@ public class TaobaoGetSelectOrderService extends AbstractWorkPlugin {
             sbField.append("timeout_action_time,cod_fee,cod_status,shipping_type,trade_memo,is_3D,buyer_email,buyer_area,trade_from,is_lgtype,is_force_wlb,");
             sbField.append("is_brand_sale,buyer_cod_fee,discount_fee,seller_cod_fee,express_agency_fee,invoice_name,service_orders, buyer_memo,buyer_flag,is_part_consign,");
             sbField.append("orders.refund_status,orders.title,orders.price,orders.num,orders.num_iid,orders.sku_id,orders.status,orders.oid,orders.total_fee,orders.payment,orders.discount_fee,orders.adjust_fee,");
-            sbField.append("orders.sku_properties_name,orders.item_meal_name,orders.item_meal_id,item_memo,orders.buyer_rate,orders.seller_rate,orders.outer_iid,orders.outer_sku_id,");
+            sbField.append("orders.sku_properties_name,orders.item_meal_name,orders.item_meal_id,item_memo,orders.buyer_rate,orders.seller_rate,orders.outer_id,orders.outer_sku_id,");
             sbField.append("orders.refund_id,orders.seller_type,orders.is_oversold,promotion_details,orders.logistics_company,orders.invoice_no,orders.divide_order_fee,is_sh_ship, orders.store_code,");
             sbField.append("order_tax_fee, orders.sub_order_tax_fee, orders.bind_oid, orders.consign_time, orders.shipping_type,orders.part_mjz_discount,");
             sbField.append("service_orders,service_orders.buyer_nick,service_orders.item_oid,service_orders.num,service_orders.price,service_orders.seller_nick,");

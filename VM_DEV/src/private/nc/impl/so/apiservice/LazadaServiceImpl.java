@@ -139,7 +139,6 @@ public class LazadaServiceImpl implements ILazadaService {
 	@Override
 	public void downloadSelectOrderCenter(String[] platforms,String[] orgs, UFDate startdate, UFDate enddate) throws BusinessException {
 		List<String> platformList = Arrays.asList(platforms);
-		
 		if(platformList.size()>0){
 			for(String platformName:platformList){
 				switch(platformName){
@@ -331,9 +330,10 @@ public class LazadaServiceImpl implements ILazadaService {
 	 * @return
 	 */
 	private UFBoolean verfyIsGift(UFDouble sub) {
-		if(sub.doubleValue() == 0.0 || UFDouble.ZERO_DBL.equals(sub)) {
-			return UFBoolean.TRUE;
-		}
+//		if(sub.doubleValue() == 0.0 || UFDouble..equals(sub)) {
+//			return UFBoolean.TRUE;
+//		}
+		//test 暂时注释掉  后面必须删除lib下OA的jar包
 		return UFBoolean.FALSE;
 	}
 

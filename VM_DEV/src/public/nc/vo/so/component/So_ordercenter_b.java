@@ -1,5 +1,7 @@
 package nc.vo.so.component;
 
+import java.io.Serializable;
+
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
@@ -18,8 +20,12 @@ import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
  * @version NCPrj ??
  */
  
-public class So_ordercenter_b extends SuperVO {
+public class So_ordercenter_b extends SuperVO implements Serializable {
 	
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3106218076486684541L;
 /**
 *销售组织表体主键
 */
